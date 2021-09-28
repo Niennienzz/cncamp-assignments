@@ -48,7 +48,7 @@ func (h *userHandler) newAccessToken(id int) (string, error) {
 	)
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
 		Audience:  "api",
-		ExpiresAt: now.Add(time.Hour * 24).Unix(),
+		ExpiresAt: now.Add(h.cfg.TokenExpiration()).Unix(),
 		Id:        uuid.NewString(),
 		IssuedAt:  now.Unix(),
 		Issuer:    "api-server",

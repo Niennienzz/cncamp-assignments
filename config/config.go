@@ -2,6 +2,7 @@ package config
 
 import (
 	"cncamp_a01/constant"
+	"time"
 )
 
 type Interface interface {
@@ -12,6 +13,9 @@ type Interface interface {
 	PasswordHashSecret() string
 	PasswordSaltLen() int
 	TokenHMACSecret() string
+	TokenExpiration() time.Duration
+	RateLimit() int
+	RateLimitWindow() time.Duration
 }
 
 var _ Interface = config{}
@@ -24,6 +28,9 @@ type config struct {
 	passwordHashSecret string
 	passwordSaltLen    int
 	tokenHMACSecret    string
+	tokenExpiration    time.Duration
+	rateLimit          int
+	rateLimitWindow    time.Duration
 }
 
 func (c config) Env() constant.EnvEnum {
@@ -52,4 +59,16 @@ func (c config) PasswordSaltLen() int {
 
 func (c config) TokenHMACSecret() string {
 	return c.tokenHMACSecret
+}
+
+func (c config) TokenExpiration() time.Duration {
+	return c.tokenExpiration
+}
+
+func (c config) RateLimit() int {
+	return c.rateLimit
+}
+
+func (c config) RateLimitWindow() time.Duration {
+	return c.rateLimitWindow
 }

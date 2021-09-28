@@ -8,15 +8,15 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type CryptoPrice interface {
+type Crypto interface {
 	GetByCode() fiber.Handler
 }
 
-type cryptoPriceHandler struct {
+type cryptoHandler struct {
 	*handler
 }
 
-func (h *cryptoPriceHandler) GetByCode() fiber.Handler {
+func (h *cryptoHandler) GetByCode() fiber.Handler {
 	type enum = constant.CryptoCodeEnum
 
 	type cryptoDAO struct {

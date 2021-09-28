@@ -3,6 +3,7 @@ package api
 import (
 	"cncamp_a01/config"
 	"cncamp_a01/handler"
+	"cncamp_a01/middleware"
 	"fmt"
 
 	"github.com/gofiber/fiber/v2"
@@ -18,7 +19,7 @@ type Interface interface {
 func New(cfg config.Interface) Interface {
 	handlers := handler.New(cfg)
 
-	// TODO: Make logger/limiter/auth middlewares.
+	// TODO: Make logger middlewares.
 	app := fiber.New()
 	app.Use(recover.New())
 	app.Use(cors.New())
@@ -35,10 +36,12 @@ func New(cfg config.Interface) Interface {
 		user.Post("/login", handlers.User().Login())
 	}
 
-	// Crypto price endpoints.
-	cp := app.Group("/crypto_price")
+	// Crypto endpoints.
+	// Only authenticated user can call, and handlers follow rate-limiting rules.
+	cp := app.Group("/crypto")
+	cp.Use(middleware.NewAuthLimiter(cfg))
 	{
-		cp.Get("/:crypto_code", handlers.CryptoPrice().GetByCode())
+		cp.Get("/:crypto_code", handlers.Crypto().GetByCode())
 	}
 
 	return &apiImpl{

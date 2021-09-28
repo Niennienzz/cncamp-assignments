@@ -15,7 +15,7 @@ import (
 
 type Interface interface {
 	User() User
-	CryptoPrice() CryptoPrice
+	Crypto() Crypto
 	Close()
 }
 
@@ -64,8 +64,8 @@ func (h *handler) User() User {
 	return &userHandler{h}
 }
 
-func (h *handler) CryptoPrice() CryptoPrice {
-	return &cryptoPriceHandler{h}
+func (h *handler) Crypto() Crypto {
+	return &cryptoHandler{h}
 }
 
 func (h *handler) Close() {
