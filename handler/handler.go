@@ -2,6 +2,7 @@ package handler
 
 import (
 	"cncamp_a01/config"
+	"cncamp_a01/constant"
 	"context"
 
 	"github.com/go-playground/validator/v10"
@@ -35,6 +36,7 @@ func New(cfg config.Interface) Interface {
 		panic(err)
 	}
 
+	// TODO: Add an HTTP client to periodically fetch new prices.
 	cryptos := `
 	CREATE TABLE IF NOT EXISTS cryptos (
 		id INTEGER PRIMARY KEY,
@@ -79,7 +81,7 @@ type errorResponse struct {
 
 func (h *handler) sendErrorResponse(c *fiber.Ctx, status int, err error) error {
 	log.Error(err)
-	if status == fiber.StatusInternalServerError && h.cfg.Env() == config.EnvProd {
+	if status == fiber.StatusInternalServerError && h.cfg.Env() == constant.EnvProd {
 		err = nil
 	}
 	c.Status(status)

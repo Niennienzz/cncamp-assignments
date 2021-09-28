@@ -1,7 +1,11 @@
 package config
 
+import (
+	"cncamp_a01/constant"
+)
+
 type Interface interface {
-	Env() Env
+	Env() constant.EnvEnum
 	Port() int
 	Version() string
 	SQLiteFileName() string
@@ -13,7 +17,7 @@ type Interface interface {
 var _ Interface = config{}
 
 type config struct {
-	env                Env
+	env                constant.EnvEnum
 	port               int
 	version            string
 	sqliteFileName     string
@@ -22,7 +26,7 @@ type config struct {
 	tokenHMACSecret    string
 }
 
-func (c config) Env() Env {
+func (c config) Env() constant.EnvEnum {
 	return c.env
 }
 

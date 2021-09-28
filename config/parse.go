@@ -1,31 +1,10 @@
 package config
 
 import (
+	"cncamp_a01/constant"
 	"flag"
 	"sync"
 )
-
-type Env string
-
-const (
-	EnvDev     Env = "DEV"
-	EnvTest    Env = "TEST"
-	EnvStaging Env = "STAGING"
-	EnvProd    Env = "PROD"
-)
-
-func (e Env) String() string {
-	return string(e)
-}
-
-func (e Env) Valid() bool {
-	switch e {
-	case EnvDev, EnvTest, EnvStaging, EnvProd:
-		return true
-	default:
-		return false
-	}
-}
 
 const (
 	DefaultEnv                = "DEV"
@@ -70,9 +49,9 @@ func parse() {
 	flag.IntVar(&pwdSaltLen, "PWD_SALT_LEN", DefaultPasswordSaltLen, "password salt length")
 	flag.StringVar(&tokenHMACSecret, "TOKEN_SECRET", DefaultTokenSecret, "token secret")
 
-	env := Env(envStr)
-	if ok := env.Valid(); !ok {
-		panic("env is not valid")
+	env := constant.EnvEnum(envStr)
+	if err := env.Valid(); err != nil {
+		panic(err)
 	}
 
 	single = &config{
