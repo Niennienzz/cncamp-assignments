@@ -36,10 +36,10 @@ func (h *cryptoPriceHandler) GetByCode() fiber.Handler {
 			return h.sendErrorResponse(c, fiber.StatusBadRequest, err)
 		}
 
-		const userQuery = `SELECT * FROM cryptos WHERE crypto_code=?;`
+		const cryptoQuery = `SELECT * FROM cryptos WHERE crypto_code=?;`
 		var (
 			crypto = new(cryptoDAO)
-			row    = h.db.QueryRowxContext(ctx, userQuery, cryptoCode.String())
+			row    = h.db.QueryRowxContext(ctx, cryptoQuery, cryptoCode.String())
 		)
 		if err := row.StructScan(crypto); err != nil {
 			if errors.Is(err, sql.ErrNoRows) {
