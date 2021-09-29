@@ -39,7 +39,7 @@ func NewUserContext() fiber.Handler {
 		// Once we can decode the token, the token must be valid.
 		claims := &jwt.StandardClaims{}
 		token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
-			return []byte(limiter.tokenSecret), nil
+			return []byte(cfg.TokenHMACSecret()), nil
 		})
 		if err != nil {
 			log.Error(err)

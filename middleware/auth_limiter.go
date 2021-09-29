@@ -9,11 +9,10 @@ import (
 )
 
 type authLimiter struct {
-	limit       int
-	window      time.Duration
-	tokenSecret string
-	mutex       sync.Mutex
-	userTimes   map[string][]time.Time
+	limit     int
+	window    time.Duration
+	mutex     sync.Mutex
+	userTimes map[string][]time.Time
 }
 
 func (limiter *authLimiter) shouldLimit(userID string) bool {
@@ -56,11 +55,10 @@ func NewAuthLimiter() fiber.Handler {
 	if limiter == nil {
 		once.Do(func() {
 			limiter = &authLimiter{
-				limit:       cfg.RateLimit(),
-				window:      cfg.RateLimitWindow(),
-				tokenSecret: cfg.TokenHMACSecret(),
-				userTimes:   make(map[string][]time.Time),
-				mutex:       sync.Mutex{},
+				limit:     cfg.RateLimit(),
+				window:    cfg.RateLimitWindow(),
+				userTimes: make(map[string][]time.Time),
+				mutex:     sync.Mutex{},
 			}
 		})
 	}
