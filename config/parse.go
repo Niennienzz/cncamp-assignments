@@ -5,6 +5,8 @@ import (
 	"flag"
 	"sync"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 )
 
 const (
@@ -12,12 +14,12 @@ const (
 	DefaultPort               = 8080
 	DefaultVersion            = "0.0.1"
 	DefaultSQLiteFileName     = "sqlite.db"
-	DefaultPasswordHashSecret = "twice_security"
 	DefaultPasswordSaltLen    = 16
-	DefaultTokenSecret        = "twice_security"
-	DefaultTokenExpireSec     = 62400 // 1 day
-	DefaultRateLimit          = 30    // 30 requests per 30 seconds
-	DefaultRateLimitWindowSec = 30    // 30 requests per 30 seconds
+	DefaultPasswordHashSecret = "twice_security" // Nobody uses this in prod.
+	DefaultTokenSecret        = "twice_security" // Nobody uses this in prod.
+	DefaultTokenExpireSec     = 62400            // 1 day
+	DefaultRateLimit          = 30               // 30 requests per 30 seconds
+	DefaultRateLimitWindowSec = 30               // 30 requests per 30 seconds
 )
 
 var (
@@ -52,8 +54,8 @@ func parse() {
 	flag.IntVar(&port, "PORT", DefaultPort, "port number of the api server")
 	flag.StringVar(&version, "VERSION", DefaultVersion, "version number of the api server")
 	flag.StringVar(&sqliteFileName, "SQLITE_FILE", DefaultSQLiteFileName, "sqlite file name")
-	flag.StringVar(&pwdHashSecret, "PWD_HASH_SECRET", DefaultPasswordHashSecret, "password hash secret")
 	flag.IntVar(&pwdSaltLen, "PWD_SALT_LEN", DefaultPasswordSaltLen, "password salt length")
+	flag.StringVar(&pwdHashSecret, "PWD_HASH_SECRET", DefaultPasswordHashSecret, "password hash secret")
 	flag.StringVar(&tokenHMACSecret, "TOKEN_SECRET", DefaultTokenSecret, "token secret")
 	flag.IntVar(&tokenExpireSec, "TOKEN_EXPIRE_SEC", DefaultTokenExpireSec, "token expiration in seconds")
 	flag.IntVar(&rateLimit, "RATE_LIMIT", DefaultRateLimit, "rate limit: how many requests per window")
@@ -68,13 +70,21 @@ func parse() {
 
 	rateLimitWindow := time.Duration(rateLimitWindowSec) * time.Second
 
+	if pwdHashSecret == DefaultPasswordHashSecret || tokenHMACSecret == DefaultTokenSecret {
+		if env == constant.EnvDev {
+			log.Warn("should override secrets, ok for dev")
+		} else {
+			log.Fatal("invalid secrets")
+		}
+	}
+
 	single = &config{
 		env:                env,
 		port:               port,
 		version:            version,
 		sqliteFileName:     sqliteFileName,
-		passwordHashSecret: pwdHashSecret,
 		passwordSaltLen:    pwdSaltLen,
+		passwordHashSecret: pwdHashSecret,
 		tokenHMACSecret:    tokenHMACSecret,
 		tokenExpiration:    tokenExpiration,
 		rateLimit:          rateLimit,

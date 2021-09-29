@@ -10,8 +10,8 @@ type Interface interface {
 	Port() int
 	Version() string
 	SQLiteFileName() string
-	PasswordHashSecret() string
 	PasswordSaltLen() int
+	PasswordHashSecret() string
 	TokenHMACSecret() string
 	TokenExpiration() time.Duration
 	RateLimit() int
@@ -25,8 +25,8 @@ type config struct {
 	port               int
 	version            string
 	sqliteFileName     string
-	passwordHashSecret string
 	passwordSaltLen    int
+	passwordHashSecret string
 	tokenHMACSecret    string
 	tokenExpiration    time.Duration
 	rateLimit          int
@@ -49,12 +49,12 @@ func (c config) SQLiteFileName() string {
 	return c.sqliteFileName
 }
 
-func (c config) PasswordHashSecret() string {
-	return c.passwordHashSecret
-}
-
 func (c config) PasswordSaltLen() int {
 	return c.passwordSaltLen
+}
+
+func (c config) PasswordHashSecret() string {
+	return c.passwordHashSecret
 }
 
 func (c config) TokenHMACSecret() string {
