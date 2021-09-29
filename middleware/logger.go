@@ -11,11 +11,13 @@ import (
 
 func NewLogger() fiber.Handler {
 	cfg := config.Get()
+
 	if cfg.Env() == constant.EnvProd {
 		log.SetFormatter(&log.JSONFormatter{})
 	} else {
 		log.SetFormatter(&log.TextFormatter{})
 	}
+
 	return func(c *fiber.Ctx) error {
 		ctx := c.UserContext()
 		userID, ok := UserIDStringFromContext(ctx)

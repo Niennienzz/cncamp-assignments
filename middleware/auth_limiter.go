@@ -52,6 +52,7 @@ var (
 // The same user cannot make more requests than the limit during a given window.
 func NewAuthLimiter() fiber.Handler {
 	cfg := config.Get()
+
 	if limiter == nil {
 		once.Do(func() {
 			limiter = &authLimiter{

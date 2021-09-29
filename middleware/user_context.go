@@ -11,6 +11,7 @@ import (
 
 func NewUserContext() fiber.Handler {
 	cfg := config.Get()
+
 	return func(c *fiber.Ctx) error {
 		// Set version as response header.
 		c.Set("Api-Version", cfg.Version())
