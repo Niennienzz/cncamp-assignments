@@ -41,7 +41,7 @@ func NewLogger() fiber.Handler {
 			return err
 		}
 
-		logger.Info("request finished")
+		logger.WithField("status", c.Response().StatusCode()).Info("request finished")
 		return nil
 	}
 }
