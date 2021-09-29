@@ -27,3 +27,40 @@
 - 也可以使用 `make run` 命令直接运行。
 - 由于服务器使用 SQLite，无需创建数据库；运行服务器会默认创建 `sqlite.db` 文件。
 - 环境变量与默认值请参考 `config/parse.go` 文件。
+
+## 网络请求示例
+
+- Healthz 检测
+
+```bash
+curl --request GET --url http://localhost:8080/healthz
+```
+
+- 用户注册
+
+```bash
+curl --request POST --url http://localhost:8080/user/signup \
+     --header 'Content-Type: application/json' \
+     --data '{
+       "email": "someuser@test.com",
+       "password": "12345678"
+     }'
+```
+
+- 用户登录
+
+```bash
+curl --request POST --url http://localhost:8080/user/login \
+     --header 'Content-Type: application/json' \
+     --data '{
+       "email": "someuser@test.com",
+       "password": "12345678"
+     }'
+```
+
+- Crypto 价格
+
+```bash
+curl --request GET --url http://localhost:8080/crypto/{cryptoCode} \
+     --header 'Authorization: Bearer {accessToken}'
+```

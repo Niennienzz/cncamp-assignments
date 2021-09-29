@@ -16,13 +16,14 @@ type Interface interface {
 	Run()
 }
 
-func New(cfg config.Interface) Interface {
-	handlers := handler.New(cfg)
-
-	// TODO: Make logger middlewares.
+func New() Interface {
 	app := fiber.New()
 	app.Use(recover.New())
 	app.Use(cors.New())
+	app.Use(middleware.NewUserContext())
+	app.Use(middleware.NewLogger())
+
+	handlers := handler.New()
 
 	// The health endpoint.
 	app.All("/healthz", func(c *fiber.Ctx) error {
@@ -39,14 +40,14 @@ func New(cfg config.Interface) Interface {
 	// Crypto endpoints.
 	// Only authenticated user can call, and handlers follow rate-limiting rules.
 	cp := app.Group("/crypto")
-	cp.Use(middleware.NewAuthLimiter(cfg))
+	cp.Use(middleware.NewAuthLimiter())
 	{
 		cp.Get("/:crypto_code", handlers.Crypto().GetByCode())
 	}
 
 	return &apiImpl{
 		app:     app,
-		port:    cfg.Port(),
+		port:    config.Get().Port(),
 		handler: handlers,
 	}
 }

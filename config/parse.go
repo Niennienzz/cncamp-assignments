@@ -25,9 +25,9 @@ var (
 	single *config
 )
 
-// Parse returns parsed configurations.
+// Get returns parsed configurations.
 // It only parses once, and returns the singleton afterwards.
-func Parse() Interface {
+func Get() Interface {
 	if single == nil {
 		once.Do(parse)
 	}

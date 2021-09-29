@@ -22,7 +22,9 @@ type Interface interface {
 // New creates a handler.Interface backed by the private handler struct.
 // This function can panic, since say if a database connection
 // cannot be established, it does not make sense to proceed.
-func New(cfg config.Interface) Interface {
+func New() Interface {
+	cfg := config.Get()
+
 	db := sqlx.MustOpen("sqlite3", cfg.SQLiteFileName())
 
 	users := `
