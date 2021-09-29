@@ -10,9 +10,9 @@ import (
 )
 
 func NewLogger() fiber.Handler {
-	cfg := config.Get()
+	cfg := config.Instance()
 
-	if cfg.Env() == constant.EnvProd {
+	if cfg.GetEnv() == constant.EnvProd {
 		log.SetFormatter(&log.JSONFormatter{})
 	} else {
 		log.SetFormatter(&log.TextFormatter{})
@@ -27,7 +27,7 @@ func NewLogger() fiber.Handler {
 
 		var (
 			reqID  = uuid.NewString()
-			logger = log.WithField("api_version", cfg.Version()).
+			logger = log.WithField("api_version", cfg.GetVersion()).
 				WithField("ip", c.IP()).
 				WithField("path", c.Path()).
 				WithField("request_id", reqID).

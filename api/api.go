@@ -47,7 +47,7 @@ func New() Interface {
 
 	return &apiImpl{
 		app:     app,
-		port:    config.Get().Port(),
+		port:    config.Instance().GetPort(),
 		handler: handlers,
 	}
 }

@@ -50,13 +50,13 @@ var (
 // NewAuthLimiter rate-limits requests based on the user token.
 // The same user cannot make more requests than the limit during a given window.
 func NewAuthLimiter() fiber.Handler {
-	cfg := config.Get()
+	cfg := config.Instance()
 
 	if limiter == nil {
 		once.Do(func() {
 			limiter = &authLimiter{
-				limit:     cfg.RateLimit(),
-				window:    cfg.RateLimitWindow(),
+				limit:     cfg.GetRateLimit(),
+				window:    cfg.GetRateLimitWindow(),
 				userTimes: make(map[string][]time.Time),
 				mutex:     sync.Mutex{},
 			}

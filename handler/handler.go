@@ -23,9 +23,9 @@ type Interface interface {
 // This function can panic, since say if a database connection
 // cannot be established, it does not make sense to proceed.
 func New() Interface {
-	cfg := config.Get()
+	cfg := config.Instance()
 
-	db := sqlx.MustOpen("sqlite3", cfg.SQLiteFileName())
+	db := sqlx.MustOpen("sqlite3", cfg.GetSQLiteFileName())
 
 	users := `
 	CREATE TABLE IF NOT EXISTS users (
@@ -83,7 +83,7 @@ type errorResponse struct {
 
 func (h *handler) sendErrorResponse(c *fiber.Ctx, status int, err error) error {
 	log.Error(err)
-	if status == fiber.StatusInternalServerError && h.cfg.Env() == constant.EnvProd {
+	if status == fiber.StatusInternalServerError && h.cfg.GetEnv() == constant.EnvProd {
 		err = nil
 	}
 	c.Status(status)

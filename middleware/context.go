@@ -1,6 +1,8 @@
 package middleware
 
-import "context"
+import (
+	"context"
+)
 
 type middlewareContextKey string
 

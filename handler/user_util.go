@@ -26,16 +26,16 @@ func (h *userHandler) randomString(length int) string {
 }
 
 func (h *userHandler) generatePasswordHashAndSalt(rawPassword string, existingSalt ...string) (string, string) {
-	salt := h.randomString(h.cfg.PasswordSaltLen())
+	salt := h.randomString(h.cfg.GetPasswordSaltLen())
 	if len(existingSalt) == 1 {
-		if len(existingSalt[0]) == h.cfg.PasswordSaltLen() {
+		if len(existingSalt[0]) == h.cfg.GetPasswordSaltLen() {
 			salt = existingSalt[0]
 		} else {
 			panic("invalid salt length")
 		}
 	}
 	var (
-		pass = []byte(rawPassword + salt + h.cfg.PasswordHashSecret())
+		pass = []byte(rawPassword + salt + h.cfg.GetPasswordHashSecret())
 		hash = sha256.Sum256(pass)
 	)
 	return base64.URLEncoding.EncodeToString(hash[:]), salt
@@ -48,12 +48,12 @@ func (h *userHandler) newAccessToken(id int) (string, error) {
 	)
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
 		Audience:  "api",
-		ExpiresAt: now.Add(h.cfg.TokenExpiration()).Unix(),
+		ExpiresAt: now.Add(h.cfg.GetTokenExpiration()).Unix(),
 		Id:        uuid.NewString(),
 		IssuedAt:  now.Unix(),
 		Issuer:    "api-server",
 		NotBefore: now.Unix(),
 		Subject:   sub,
 	})
-	return token.SignedString([]byte(h.cfg.TokenHMACSecret()))
+	return token.SignedString([]byte(h.cfg.GetTokenHMACSecret()))
 }

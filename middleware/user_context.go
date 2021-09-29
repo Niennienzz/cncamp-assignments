@@ -10,11 +10,11 @@ import (
 )
 
 func NewUserContext() fiber.Handler {
-	cfg := config.Get()
+	cfg := config.Instance()
 
 	return func(c *fiber.Ctx) error {
 		// Set version as response header.
-		c.Set("Api-Version", cfg.Version())
+		c.Set("Api-Version", cfg.GetVersion())
 
 		var (
 			authorizationBytes = c.Request().Header.Peek("Authorization")
@@ -39,7 +39,7 @@ func NewUserContext() fiber.Handler {
 		// Once we can decode the token, the token must be valid.
 		claims := &jwt.StandardClaims{}
 		token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
-			return []byte(cfg.TokenHMACSecret()), nil
+			return []byte(cfg.GetTokenHMACSecret()), nil
 		})
 		if err != nil {
 			log.Error(err)

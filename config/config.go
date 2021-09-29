@@ -6,69 +6,73 @@ import (
 )
 
 type Interface interface {
-	Env() constant.EnvEnum
-	Port() int
-	Version() string
-	SQLiteFileName() string
-	PasswordSaltLen() int
-	PasswordHashSecret() string
-	TokenHMACSecret() string
-	TokenExpiration() time.Duration
-	RateLimit() int
-	RateLimitWindow() time.Duration
+	GetEnv() constant.EnvEnum
+	GetPort() int
+	GetVersion() string
+	GetSQLiteFileName() string
+	GetPasswordSaltLen() int
+	GetPasswordHashSecret() string
+	GetTokenHMACSecret() string
+	GetTokenExpiration() time.Duration
+	GetRateLimit() int
+	GetRateLimitWindow() time.Duration
 }
 
 var _ Interface = config{}
 
+type enum = constant.EnvEnum
+
+type duration = time.Duration
+
 type config struct {
-	env                constant.EnvEnum
-	port               int
-	version            string
-	sqliteFileName     string
-	passwordSaltLen    int
-	passwordHashSecret string
-	tokenHMACSecret    string
-	tokenExpiration    time.Duration
-	rateLimit          int
-	rateLimitWindow    time.Duration
+	Env                enum     `required:"true" envconfig:"ENV" default:"DEV"`
+	Port               int      `required:"true" envconfig:"PORT" default:"8080"`
+	Version            string   `required:"true" envconfig:"VERSION" default:"0.0.1"`
+	SQLiteFileName     string   `required:"true" envconfig:"SQLITE_FILE" default:"sqlite.db"`
+	PasswordSaltLen    int      `required:"true" envconfig:"PWD_SALT_LEN" default:"16"`
+	PasswordHashSecret string   `required:"true" envconfig:"PWD_HASH_SECRET" default:"twice_security"`
+	TokenHMACSecret    string   `required:"true" envconfig:"TOKEN_SECRET" default:"twice_security"`
+	TokenExpiration    duration `required:"true" envconfig:"TOKEN_EXPIRE_SEC" default:"62400s"`
+	RateLimit          int      `required:"true" envconfig:"RATE_LIMIT" default:"30"`
+	RateLimitWindow    duration `required:"true" envconfig:"RATE_LIMIT_WINDOW_SEC" default:"30s"`
 }
 
-func (c config) Env() constant.EnvEnum {
-	return c.env
+func (c config) GetEnv() constant.EnvEnum {
+	return c.Env
 }
 
-func (c config) Port() int {
-	return c.port
+func (c config) GetPort() int {
+	return c.Port
 }
 
-func (c config) Version() string {
-	return c.version
+func (c config) GetVersion() string {
+	return c.Version
 }
 
-func (c config) SQLiteFileName() string {
-	return c.sqliteFileName
+func (c config) GetSQLiteFileName() string {
+	return c.SQLiteFileName
 }
 
-func (c config) PasswordSaltLen() int {
-	return c.passwordSaltLen
+func (c config) GetPasswordSaltLen() int {
+	return c.PasswordSaltLen
 }
 
-func (c config) PasswordHashSecret() string {
-	return c.passwordHashSecret
+func (c config) GetPasswordHashSecret() string {
+	return c.PasswordHashSecret
 }
 
-func (c config) TokenHMACSecret() string {
-	return c.tokenHMACSecret
+func (c config) GetTokenHMACSecret() string {
+	return c.TokenHMACSecret
 }
 
-func (c config) TokenExpiration() time.Duration {
-	return c.tokenExpiration
+func (c config) GetTokenExpiration() time.Duration {
+	return c.TokenExpiration
 }
 
-func (c config) RateLimit() int {
-	return c.rateLimit
+func (c config) GetRateLimit() int {
+	return c.RateLimit
 }
 
-func (c config) RateLimitWindow() time.Duration {
-	return c.rateLimitWindow
+func (c config) GetRateLimitWindow() time.Duration {
+	return c.RateLimitWindow
 }
