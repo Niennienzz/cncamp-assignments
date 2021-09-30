@@ -4,6 +4,8 @@ import (
 	"cncamp_a01/config"
 	"cncamp_a01/constant"
 	"context"
+	"net/http"
+	"time"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
@@ -16,7 +18,7 @@ import (
 type Interface interface {
 	User() User
 	Crypto() Crypto
-	Close()
+	Shutdown() error
 }
 
 // New creates a handler.Interface backed by the private handler struct.
@@ -38,28 +40,50 @@ func New() Interface {
 		panic(err)
 	}
 
-	// TODO: Add an HTTP client to periodically fetch new prices.
 	cryptos := `
 	CREATE TABLE IF NOT EXISTS cryptos (
 		id INTEGER PRIMARY KEY,
 		crypto_code TEXT NOT NULL UNIQUE,
-		price INT NOT NULL
+		price REAL NOT NULL,
+		updated_at TEXT NOT NULL
 	);`
 	if _, err := db.ExecContext(context.Background(), cryptos); err != nil {
 		panic(err)
 	}
 
-	return &handler{
-		cfg:      cfg,
-		db:       db,
-		validate: validator.New(),
+	h := &handler{
+		cfg:         cfg,
+		db:          db,
+		validate:    validator.New(),
+		fetchClient: http.DefaultClient,
+		fetchDone:   make(chan struct{}),
+		fetchTicker: time.NewTicker(cfg.GetFetchWindow()),
 	}
+
+	go func() {
+		h.fetchAll()
+		for {
+			select {
+			case <-h.fetchDone:
+				h.fetchTicker.Stop()
+				log.Info("api.handler.fetchTicker stopped")
+				return
+			case <-h.fetchTicker.C:
+				h.fetchAll()
+			}
+		}
+	}()
+
+	return h
 }
 
 type handler struct {
-	cfg      config.Interface
-	db       *sqlx.DB
-	validate *validator.Validate
+	cfg         config.Interface
+	db          *sqlx.DB
+	validate    *validator.Validate
+	fetchClient *http.Client
+	fetchDone   chan struct{}
+	fetchTicker *time.Ticker
 }
 
 func (h *handler) User() User {
@@ -70,11 +94,9 @@ func (h *handler) Crypto() Crypto {
 	return &cryptoHandler{h}
 }
 
-func (h *handler) Close() {
-	err := h.db.Close()
-	if err != nil {
-		log.Error(err)
-	}
+func (h *handler) Shutdown() error {
+	h.fetchDone <- struct{}{}
+	return h.db.Close()
 }
 
 type errorResponse struct {

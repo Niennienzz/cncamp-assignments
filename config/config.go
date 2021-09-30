@@ -16,6 +16,7 @@ type Interface interface {
 	GetTokenExpiration() time.Duration
 	GetRateLimit() int
 	GetRateLimitWindow() time.Duration
+	GetFetchWindow() time.Duration
 }
 
 var _ Interface = config{}
@@ -35,6 +36,7 @@ type config struct {
 	TokenExpiration    duration `required:"true" envconfig:"TOKEN_EXPIRE_SEC" default:"62400s"`
 	RateLimit          int      `required:"true" envconfig:"RATE_LIMIT" default:"30"`
 	RateLimitWindow    duration `required:"true" envconfig:"RATE_LIMIT_WINDOW_SEC" default:"30s"`
+	FetchWindow        duration `required:"true" envconfig:"FETCH_WINDOW_SEC" default:"30s"`
 }
 
 func (c config) GetEnv() constant.EnvEnum {
@@ -75,4 +77,8 @@ func (c config) GetRateLimit() int {
 
 func (c config) GetRateLimitWindow() time.Duration {
 	return c.RateLimitWindow
+}
+
+func (c config) GetFetchWindow() time.Duration {
+	return c.FetchWindow
 }

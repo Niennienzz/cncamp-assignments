@@ -20,9 +20,10 @@ func (h *cryptoHandler) GetByCode() fiber.Handler {
 	type enum = constant.CryptoCodeEnum
 
 	type cryptoDAO struct {
-		ID         int  `json:"id" db:"id"`
-		CryptoCode enum `json:"cryptoCode" db:"crypto_code"`
-		Price      int  `json:"price" db:"price"`
+		ID         int     `json:"id" db:"id"`
+		CryptoCode enum    `json:"name" db:"crypto_code"`
+		Price      float64 `json:"priceUSD" db:"price"`
+		UpdatedAt  string  `json:"updatedAtUTC" db:"updated_at"`
 	}
 
 	return func(c *fiber.Ctx) error {

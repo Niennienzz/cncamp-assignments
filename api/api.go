@@ -14,6 +14,7 @@ import (
 
 type Interface interface {
 	Run()
+	Shutdown()
 }
 
 func New() Interface {
@@ -59,9 +60,27 @@ type apiImpl struct {
 }
 
 func (api *apiImpl) Run() {
-	defer api.handler.Close()
 	err := api.app.Listen(fmt.Sprintf(":%d", api.port))
 	if err != nil {
 		log.Error(err)
 	}
+}
+
+func (api *apiImpl) Shutdown() {
+	log.Info("api server shutting down...")
+	log.Info("waiting for active connections to close...")
+
+	if err := api.app.Shutdown(); err != nil {
+		log.Error(err)
+	} else {
+		log.Info("api.app shut down")
+	}
+
+	if err := api.handler.Shutdown(); err != nil {
+		log.Error(err)
+	} else {
+		log.Info("api.handler shut down")
+	}
+
+	log.Info("api server gracefully shut down")
 }
