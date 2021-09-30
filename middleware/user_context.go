@@ -9,13 +9,10 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func NewUserContext() fiber.Handler {
+func UserContext() fiber.Handler {
 	cfg := config.Instance()
 
 	return func(c *fiber.Ctx) error {
-		// Set version as response header.
-		c.Set("Api-Version", cfg.GetVersion())
-
 		var (
 			authorizationBytes = c.Request().Header.Peek("Authorization")
 			authorization      = string(authorizationBytes)

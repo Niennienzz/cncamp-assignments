@@ -47,9 +47,9 @@ var (
 	limiter *authLimiter
 )
 
-// NewAuthLimiter rate-limits requests based on the user token.
+// AuthLimiter rate-limits requests based on the user token.
 // The same user cannot make more requests than the limit during a given window.
-func NewAuthLimiter() fiber.Handler {
+func AuthLimiter() fiber.Handler {
 	cfg := config.Instance()
 
 	if limiter == nil {

@@ -9,7 +9,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func NewLogger() fiber.Handler {
+func Logger() fiber.Handler {
 	cfg := config.Instance()
 
 	if cfg.GetEnv() == constant.EnvProd {

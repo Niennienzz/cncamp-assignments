@@ -14,10 +14,10 @@
 ## 要求
 
 - 编写一个 HTTP 服务器。
-- 接收客户端 Request，并将 Request 中带的 Header 写入 Response Header.
-- 读取当前系统的环境变量中的 `VERSION` 配置，并写入Response Header.
-- Server 端记录访问日志包括客户端 IP，HTTP 返回码，输出到 Server 端的标准输出。
-- 当访问 localhost/healthz 时，应返回 200 OK.
+- 接收客户端 Request，并将 Request 中带的 Header 写入 Response Header -> [middleware/header.go](middleware/header.go)
+- 读取当前系统的环境变量中的 `VERSION` 配置，并写入Response Header -> [middleware/header.go](middleware/header.go)
+- Server 端记录访问日志包括客户端 IP，HTTP 返回码，输出到 Server 端的标准输出 -> [middleware/logger.go](middleware/logger.go)
+- 当访问 localhost/healthz 时，应返回 200 OK -> [api/api.go](api/api.go)
 
 ## 如何运行
 

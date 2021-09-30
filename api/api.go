@@ -21,8 +21,9 @@ func New() Interface {
 	app := fiber.New()
 	app.Use(recover.New())
 	app.Use(cors.New())
-	app.Use(middleware.NewUserContext())
-	app.Use(middleware.NewLogger())
+	app.Use(middleware.Header())
+	app.Use(middleware.UserContext())
+	app.Use(middleware.Logger())
 
 	handlers := handler.New()
 
@@ -41,7 +42,7 @@ func New() Interface {
 	// Crypto endpoints.
 	// Only authenticated user can call, and handlers follow rate-limiting rules.
 	cp := app.Group("/crypto")
-	cp.Use(middleware.NewAuthLimiter())
+	cp.Use(middleware.AuthLimiter())
 	{
 		cp.Get("/:crypto_code", handlers.Crypto().GetByCode())
 	}
