@@ -15,7 +15,7 @@ type authLimiter struct {
 	userTimes map[string][]time.Time
 }
 
-func (limiter *authLimiter) shouldLimit(userID string) bool {
+func (limiter *authLimiter) allow(userID string) bool {
 	limiter.mutex.Lock()
 	defer limiter.mutex.Unlock()
 
@@ -35,11 +35,11 @@ func (limiter *authLimiter) shouldLimit(userID string) bool {
 	if len(newTimes) >= limiter.limit {
 		limiter.userTimes[userID] = newTimes
 		return false
-	} else {
-		newTimes = append(newTimes, now)
-		limiter.userTimes[userID] = newTimes
-		return true
 	}
+
+	newTimes = append(newTimes, now)
+	limiter.userTimes[userID] = newTimes
+	return true
 }
 
 var (
@@ -70,7 +70,7 @@ func AuthLimiter() fiber.Handler {
 			return c.SendStatus(fiber.StatusUnauthorized)
 		}
 
-		if ok := limiter.shouldLimit(userID); !ok {
+		if ok := limiter.allow(userID); !ok {
 			return c.SendStatus(fiber.StatusTooManyRequests)
 		}
 

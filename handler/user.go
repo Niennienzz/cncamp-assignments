@@ -106,12 +106,12 @@ func (h *userHandler) Login() fiber.Handler {
 			user = new(userDAO)
 			row  = h.db.QueryRowxContext(ctx, userQuery, req.Email)
 		)
-		if err := row.StructScan(user); err != nil {
-			if errors.Is(err, sql.ErrNoRows) {
-				return h.sendErrorResponse(c, fiber.StatusBadRequest, errors.New("user not found"))
-			} else {
-				return h.sendErrorResponse(c, fiber.StatusInternalServerError, err)
-			}
+		err := row.StructScan(user)
+		if errors.Is(err, sql.ErrNoRows) {
+			return h.sendErrorResponse(c, fiber.StatusBadRequest, errors.New("user not found"))
+		}
+		if err != nil {
+			return h.sendErrorResponse(c, fiber.StatusInternalServerError, err)
 		}
 
 		hashedPassword, _ := h.generatePasswordHashAndSalt(req.Password, user.Salt)

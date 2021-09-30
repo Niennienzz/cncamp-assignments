@@ -42,12 +42,12 @@ func (h *cryptoHandler) GetByCode() fiber.Handler {
 			crypto = new(cryptoDAO)
 			row    = h.db.QueryRowxContext(ctx, cryptoQuery, cryptoCode.String())
 		)
-		if err := row.StructScan(crypto); err != nil {
-			if errors.Is(err, sql.ErrNoRows) {
-				return h.sendErrorResponse(c, fiber.StatusBadRequest, errors.New("crypto not found"))
-			} else {
-				return h.sendErrorResponse(c, fiber.StatusInternalServerError, err)
-			}
+		err := row.StructScan(crypto)
+		if errors.Is(err, sql.ErrNoRows) {
+			return h.sendErrorResponse(c, fiber.StatusBadRequest, errors.New("crypto not found"))
+		}
+		if err != nil {
+			return h.sendErrorResponse(c, fiber.StatusInternalServerError, err)
 		}
 
 		c.Status(fiber.StatusOK)

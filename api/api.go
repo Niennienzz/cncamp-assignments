@@ -73,15 +73,13 @@ func (api *apiImpl) Shutdown() {
 
 	if err := api.app.Shutdown(); err != nil {
 		log.Error(err)
-	} else {
-		log.Info("api.app shut down")
 	}
+	log.Info("api.app shut down")
 
 	if err := api.handler.Shutdown(); err != nil {
 		log.Error(err)
-	} else {
-		log.Info("api.handler shut down")
 	}
+	log.Info("api.handler shut down")
 
 	log.Info("api server gracefully shut down")
 }
