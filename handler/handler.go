@@ -15,16 +15,16 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-type Interface interface {
+type Handler interface {
 	User() User
 	Crypto() Crypto
 	Shutdown() error
 }
 
-// New creates a handler.Interface backed by the private handler struct.
+// New creates a handler.Handler backed by the private handler struct.
 // This function can panic, since say if a database connection
 // cannot be established, it does not make sense to proceed.
-func New() Interface {
+func New() Handler {
 	cfg := config.Instance()
 
 	db := sqlx.MustOpen("sqlite3", cfg.GetSQLiteFileName())
@@ -66,7 +66,7 @@ func New() Interface {
 			select {
 			case <-h.fetchDone:
 				h.fetchTicker.Stop()
-				log.Info("api.handler.fetchTicker stopped")
+				log.Info("handler.fetchTicker stopped")
 				return
 			case <-h.fetchTicker.C:
 				h.fetchAll()

@@ -56,7 +56,7 @@ func New() Interface {
 type apiImpl struct {
 	app     *fiber.App
 	port    int
-	handler handler.Interface
+	handler handler.Handler
 }
 
 func (api *apiImpl) Run() {

@@ -37,6 +37,7 @@ curl --request GET --url http://localhost:8080/healthz
 ```
 
 - 用户注册
+- 邮箱地址格式须合法，密码长度至少八位
 
 ```bash
 curl --request POST --url http://localhost:8080/user/signup \
@@ -59,6 +60,7 @@ curl --request POST --url http://localhost:8080/user/login \
 ```
 
 - Crypto 价格
+- 因为是简单示例服务器，路径参数 `{cryptoCode}` 仅支持 `ADA`、`BNB`、`BTC` 与 `ETH`.
 
 ```bash
 curl --request GET --url http://localhost:8080/crypto/{cryptoCode} \
