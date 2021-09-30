@@ -8,14 +8,11 @@ import (
 
 func main() {
 	srv := api.New()
+	go srv.Run()
 
-	go func() {
-		srv.Run()
-	}()
+	sig := make(chan os.Signal, 1)
+	signal.Notify(sig, os.Interrupt)
 
-	interrupt := make(chan os.Signal, 1)
-	signal.Notify(interrupt, os.Interrupt)
-
-	<-interrupt
+	<-sig
 	srv.Shutdown()
 }
