@@ -83,7 +83,3 @@ func (api *apiImpl) Shutdown() {
 
 	log.Info("api server gracefully shut down")
 }
-
-func (api *apiImpl) fiberApp() *fiber.App {
-	return api.app
-}
