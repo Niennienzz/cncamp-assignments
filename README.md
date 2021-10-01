@@ -23,10 +23,10 @@
 
 - 测试环境 Golang v1.16+, GNU Make v3.81+.
 - 使用 `make dep` 命令下载依赖至 `vendor` 目录。
-- 可以使用 `make build` 命令编译服务器。
-- 也可以使用 `make run` 命令直接运行。
+- 使用 `make test` 命令运行单元测试。
+- 可以使用 `make build` 命令编译服务器；也可以使用 `make run` 命令直接运行。
 - 由于服务器使用 SQLite，无需创建数据库；运行服务器会默认创建 `sqlite.db` 文件。
-- 环境变量与默认值请参考 `config/parse.go` 文件。
+- 环境变量与默认值请参考 `config/config.go` 文件。
 
 ## 网络请求示例
 
@@ -49,6 +49,7 @@ curl --request POST --url http://localhost:8080/user/signup \
 ```
 
 - 用户登录
+- 成功登录后获取 `{accessToken}`
 
 ```bash
 curl --request POST --url http://localhost:8080/user/login \
@@ -60,7 +61,8 @@ curl --request POST --url http://localhost:8080/user/login \
 ```
 
 - Crypto 价格
-- 因为是简单示例服务器，路径参数 `{cryptoCode}` 仅支持 `ADA`、`BNB`、`BTC` 与 `ETH`.
+- 因为是简单示例服务器，路径参数 `{cryptoCode}` 仅支持 `ADA`、`BNB`、`BTC` 与 `ETH`
+- Authorization Header 需要使用上述登录获取的 `{accessToken}`
 
 ```bash
 curl --request GET --url http://localhost:8080/crypto/{cryptoCode} \
