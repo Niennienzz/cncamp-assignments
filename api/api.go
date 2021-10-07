@@ -69,6 +69,7 @@ func (api *apiImpl) Run() {
 
 func (api *apiImpl) Shutdown() {
 	log.Info("api server shutting down...")
+
 	log.Info("waiting for active connections to close...")
 
 	if err := api.app.Shutdown(); err != nil {
