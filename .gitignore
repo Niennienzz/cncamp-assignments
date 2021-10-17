@@ -147,6 +147,7 @@ Temporary Items
 
 ### Built Binary ###
 http_server
+cncamp_http_server
 
 ### Default SQLite File ###
 sqlite.db
