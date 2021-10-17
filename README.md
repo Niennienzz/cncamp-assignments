@@ -1,3 +1,30 @@
+# Cloud-Native Camp Assignment #02
+
+## 要求
+
+- 构建本地 Docker 镜像。
+- 编写 `Dockerfile` 将 Assignment #01 编写的服务器容器化 -> [Dockerfile](https://github.com/Niennienzz/cncamp-a01/blob/main/Dockerfile)
+- 将镜像推送至 Docker 官方镜像仓库。
+- 通过 Docker 命令本地启动服务器。
+- 通过 `nsenter` 进入容器查看 IP 配置。
+
+## 如何运行
+
+- 构建本地 Docker 镜像
+```bash
+docker build --tag cncamp_http_server .
+```
+- 查看镜像列表，成功构建的 `cncamp_http_server` 镜像会出现在列表中
+```bash
+docker image ls
+```
+- 通过 Docker 本地启动服务器
+```bash
+docker run cncamp_http_server
+```
+
+---
+
 # Cloud-Native Camp Assignment #01
 
 - [GeekBang.org](https://u.geekbang.org/) / [InfoQ.cn](https://www.infoq.cn/) Cloud-Native Camp Assignment #01
