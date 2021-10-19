@@ -12,12 +12,11 @@ ADD . /app
 # Resolve dependencies.
 RUN go mod vendor
 
-# Compile to binary.
-# Target Linux so that Docker can run it everywhere.
+# Compile to binary, target Linux so that Docker can run it everywhere.
 RUN GOOS=linux go build -o /app/cncamp_http_server
 
 ### Final Stage ###
-# Choose one of the smallest base image: distroless.
+# Choose one of the smallest base images: distroless.
 FROM gcr.io/distroless/base-debian10
 
 # Copy the binary file.

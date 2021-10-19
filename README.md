@@ -1,33 +1,6 @@
-# Cloud-Native Camp Assignment #02
-
-## 要求
-
-- 构建本地 Docker 镜像。
-- 编写 `Dockerfile` 将 Assignment #01 编写的服务器容器化 -> [Dockerfile](https://github.com/Niennienzz/cncamp-a01/blob/main/Dockerfile)
-- 将镜像推送至 Docker 官方镜像仓库。
-- 通过 Docker 命令本地启动服务器。
-- 通过 `nsenter` 进入容器查看 IP 配置。
-
-## 如何运行
-
-- 构建本地 Docker 镜像
-```bash
-docker build --tag cncamp_http_server .
-```
-- 查看镜像列表，成功构建的 `cncamp_http_server` 镜像会出现在列表中
-```bash
-docker image ls
-```
-- 通过 Docker 本地启动服务器
-- 可以通过 `-e` 传入环境参数
-```bash
-docker run -p 8080:8080 cncamp_http_server
-docker run -p 8080:8080 -e "RATE_LIMIT=5" -e "RATE_LIMIT_WINDOW_SEC=10s" cncamp_http_server
-```
-
----
-
 # Cloud-Native Camp Assignment #01
+<details>
+  <summary>点击展开 Assignment #01</summary>
 
 - [GeekBang.org](https://u.geekbang.org/) / [InfoQ.cn](https://www.infoq.cn/) Cloud-Native Camp Assignment #01
 - 极客时间云原生训练营 - 作业 #01
@@ -96,4 +69,77 @@ curl --request POST --url http://localhost:8080/user/login \
 ```bash
 curl --request GET --url http://localhost:8080/crypto/{cryptoCode} \
      --header 'Authorization: Bearer {accessToken}'
+```
+
+</details>
+
+---
+
+# Cloud-Native Camp Assignment #02
+
+## 要求
+
+- 构建本地 Docker 镜像
+- 编写 `Dockerfile` 将 Assignment #01 编写的服务器容器化 -> [Dockerfile](https://github.com/Niennienzz/cncamp-a01/blob/main/Dockerfile)
+- 将镜像推送至 DockerHub 官方镜像仓库
+- 通过 Docker 命令本地启动服务器
+- 通过 `nsenter` 进入容器查看 IP 配置
+
+## 本地构建与运行
+
+- 构建本地 Docker 镜像
+
+```bash
+docker build --tag cncamp_http_server .
+```
+
+- 查看镜像列表，成功构建的 `cncamp_http_server` 镜像会出现在列表中
+
+```bash
+docker image ls
+```
+
+- 通过 Docker 本地启动服务器
+- 可以通过 `-e` 传入环境参数
+
+```bash
+docker run -p 8080:8080 cncamp_http_server
+docker run -p 8080:8080 -e "RATE_LIMIT=5" -e "RATE_LIMIT_WINDOW_SEC=10s" cncamp_http_server
+```
+
+## 将镜像推送至 DockerHub
+
+- 镜像已推送至[这里](https://hub.docker.com/repository/docker/niennienzz/cncamp-a02)
+- 构建本地 Docker 镜像时打的 Tag 比较简略，推送之前需重新使用标准格式打 Tag
+
+```bash
+docker tag <existing-image> <hub-user>/<repo-name>[:<tag>]
+```
+
+- 将镜像推送至 DockerHub
+
+```bash
+docker push <hub-user>/<repo-name>[:<tag>]
+```
+
+## 进入容器查看 IP 配置
+
+- 找到正在运行的容器实例
+
+```bash
+docker ps | grep cncamp_http_server
+#=> 6592fd79xxxx
+```
+
+- 找到上述容器实例实例的 PID
+
+```bash
+docker inspect 6592fd79xxxx | grep -i pid
+#=> 12345
+```
+
+- 通过 `nsenter` 进入容器查看 IP 配置
+
+```bash
+nsenter -t 12345 -n ip a
 ```
