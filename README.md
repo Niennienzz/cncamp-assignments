@@ -19,8 +19,10 @@ docker build --tag cncamp_http_server .
 docker image ls
 ```
 - 通过 Docker 本地启动服务器
+- 可以通过 `-e` 传入环境参数
 ```bash
-docker run cncamp_http_server
+docker run -p 8080:8080 cncamp_http_server
+docker run -p 8080:8080 -e "RATE_LIMIT=5" -e "RATE_LIMIT_WINDOW_SEC=10s" cncamp_http_server
 ```
 
 ---
