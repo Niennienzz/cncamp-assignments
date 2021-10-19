@@ -31,6 +31,9 @@ func (e CryptoCodeEnum) Valid() error {
 
 // Value implements driver.Valuer for CryptoCodeEnum.
 func (e CryptoCodeEnum) Value() (driver.Value, error) {
+	if err := e.Valid(); err != nil {
+		return nil, err
+	}
 	return e.String(), nil
 }
 
@@ -38,12 +41,12 @@ func (e CryptoCodeEnum) Value() (driver.Value, error) {
 func (e *CryptoCodeEnum) Scan(val interface{}) error {
 	var s string
 	switch v := val.(type) {
-	case nil:
-		return nil
 	case string:
 		s = v
 	case []uint8:
 		s = string(v)
+	default:
+		return ErrInvalidCryptoEnum
 	}
 	switch s {
 	case CryptoADA.String():

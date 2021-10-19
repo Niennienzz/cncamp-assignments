@@ -63,7 +63,8 @@ type apiImpl struct {
 func (api *apiImpl) Run() {
 	err := api.app.Listen(fmt.Sprintf(":%d", api.port))
 	if err != nil {
-		log.Error(err)
+		api.Shutdown()
+		log.Fatalln(err)
 	}
 }
 
