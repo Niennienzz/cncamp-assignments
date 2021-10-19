@@ -146,7 +146,6 @@ Temporary Items
 # End of https://www.toptal.com/developers/gitignore/api/go,macos,intellij+all
 
 ### Built Binary ###
-http_server
 cncamp_http_server
 
 ### Default SQLite File ###
