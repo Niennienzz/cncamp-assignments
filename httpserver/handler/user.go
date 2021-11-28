@@ -1,8 +1,14 @@
 package handler
 
 import (
-	"database/sql"
 	"errors"
+	"strings"
+
+	"go.mongodb.org/mongo-driver/mongo"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
+
+	"go.mongodb.org/mongo-driver/bson"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -16,6 +22,13 @@ type userHandler struct {
 	*handler
 }
 
+type userDAO struct {
+	ID             primitive.ObjectID `json:"id" bson:"_id"`
+	Email          string             `json:"email" json:"_id"`
+	HashedPassword string             `json:"hashed_password" json:"_id"`
+	Salt           string             `json:"salt" json:"_id"`
+}
+
 func (h *userHandler) Signup() fiber.Handler {
 	type request struct {
 		Email    string `json:"email" validate:"required,email"`
@@ -23,7 +36,7 @@ func (h *userHandler) Signup() fiber.Handler {
 	}
 
 	type response struct {
-		Created bool `json:"created"`
+		ID primitive.ObjectID `json:"id"`
 	}
 
 	return func(c *fiber.Ctx) error {
@@ -37,19 +50,10 @@ func (h *userHandler) Signup() fiber.Handler {
 		if err := h.validate.Struct(req); err != nil {
 			return h.sendErrorResponse(c, fiber.StatusBadRequest, err)
 		}
+		req.Email = strings.ToLower(req.Email)
 
-		tx, err := h.db.Begin()
+		count, err := h.mongoDB.Collection(usersCol).CountDocuments(ctx, bson.M{"email": req.Email})
 		if err != nil {
-			return h.sendErrorResponse(c, fiber.StatusInternalServerError, err)
-		}
-		defer tx.Rollback()
-
-		const userQuery = `SELECT COUNT(*) FROM users WHERE email=?;`
-		var (
-			count int
-			row   = tx.QueryRowContext(ctx, userQuery, req.Email)
-		)
-		if err := row.Scan(&count); err != nil {
 			return h.sendErrorResponse(c, fiber.StatusInternalServerError, err)
 		}
 		if count != 0 {
@@ -57,18 +61,20 @@ func (h *userHandler) Signup() fiber.Handler {
 		}
 
 		hashedPassword, salt := h.generatePasswordHashAndSalt(req.Password)
-
-		const userCreation = `INSERT INTO users (email, hashed_password, salt) VALUES (?, ?, ?);`
-		if _, err := tx.ExecContext(ctx, userCreation, req.Email, hashedPassword, salt); err != nil {
-			return h.sendErrorResponse(c, fiber.StatusInternalServerError, err)
+		user := userDAO{
+			ID:             primitive.NewObjectID(),
+			Email:          req.Email,
+			HashedPassword: hashedPassword,
+			Salt:           salt,
 		}
 
-		if err := tx.Commit(); err != nil {
+		res, err := h.mongoDB.Collection(usersCol).InsertOne(ctx, user)
+		if err != nil {
 			return h.sendErrorResponse(c, fiber.StatusInternalServerError, err)
 		}
 
 		c.Status(fiber.StatusCreated)
-		return c.JSON(response{Created: true})
+		return c.JSON(response{ID: res.InsertedID.(primitive.ObjectID)})
 	}
 }
 
@@ -76,13 +82,6 @@ func (h *userHandler) Login() fiber.Handler {
 	type request struct {
 		Email    string `json:"email" validate:"required,email"`
 		Password string `json:"password" validate:"required,min=8,max=64"`
-	}
-
-	type userDAO struct {
-		ID             int    `db:"id"`
-		Email          string `db:"email"`
-		HashedPassword string `db:"hashed_password"`
-		Salt           string `db:"salt"`
 	}
 
 	type response struct {
@@ -100,14 +99,11 @@ func (h *userHandler) Login() fiber.Handler {
 		if err := h.validate.Struct(req); err != nil {
 			return h.sendErrorResponse(c, fiber.StatusBadRequest, err)
 		}
+		req.Email = strings.ToLower(req.Email)
 
-		const userQuery = `SELECT * FROM users WHERE email=?;`
-		var (
-			user = new(userDAO)
-			row  = h.db.QueryRowxContext(ctx, userQuery, req.Email)
-		)
-		err := row.StructScan(user)
-		if errors.Is(err, sql.ErrNoRows) {
+		user := userDAO{}
+		err := h.mongoDB.Collection(usersCol).FindOne(ctx, bson.M{"email": req.Email}).Decode(&user)
+		if errors.Is(err, mongo.ErrNoDocuments) {
 			return h.sendErrorResponse(c, fiber.StatusBadRequest, errors.New("user not found"))
 		}
 		if err != nil {

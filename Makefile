@@ -5,9 +5,7 @@ run: dep
 	cd httpserver && go run main.go
 
 test: dep
-	cd httpserver && go test cncamp_a01/api -v
-	cd httpserver && go test cncamp_a01/config -v
-	cd httpserver && go test cncamp_a01/constant -v
+	cd httpserver && go test ./... -v
 
 bin: dep
 	cd httpserver && go build -o ../bin/cncamp_http_server

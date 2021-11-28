@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo-deployment
+  labels:
+    app: mongo
+spec:
+  replicas: 1
+  selector:
+    # All Pods that match the following label belong to the current Deployment.
+    matchLabels:
+      app: mongo
+  # Configuration for Pod insides the Deployment.
+  # Thus, it has its own 'metadata' and 'spec' sections.
+  template:
+    metadata:
+      # Labels is required for Pods in order for selector to use.
+      labels:
+        app: mongo
+    spec:
+      # It is allowed to have multiple containers within a Pod.
+      # But usually we use one container per Pod.
+      containers:
+        - name: mongodb
+          image: mongo:5.0
+          ports:
+            - containerPort: 27017
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secret
+                  key: mongo-user
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secret
+                  key: mongo-password
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  # This is the name of the current Service for others to use.
+  name: mongo-service
+spec:
+  selector:
+    # This is how Service finds the Pod.
+    app: mongo
+  ports:
+    - protocol: TCP
+      port: 27017 # Port the current Service is exposing.
+      targetPort: 27017 # Port of the Pod.

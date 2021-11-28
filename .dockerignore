@@ -455,6 +455,6 @@ FodyWeavers.xsd
 ### Built Binary ###
 bin/cncamp_http_server
 
-### Default SQLite File ###
+### SQLite Test Files ###
 sqlite.db
 sqlite_test.db

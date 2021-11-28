@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: httpserver-deployment
+  labels:
+    app: httpserver
+spec:
+  replicas: 1
+  selector:
+    # All Pods that match the following label belong to the current Deployment.
+    matchLabels:
+      app: httpserver
+  # Configuration for Pod insides the Deployment.
+  # Thus, it has its own 'metadata' and 'spec' sections.
+  template:
+    metadata:
+      # Labels is required for Pods in order for selector to use.
+      labels:
+        app: httpserver
+    spec:
+      # It is allowed to have multiple containers within a Pod.
+      # But usually we use one container per Pod.
+      containers:
+        - name: httpserver
+          image: niennienzz/cncamp_http_server:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secret
+                  key: mongo-user
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secret
+                  key: mongo-password
+            - name: MONGO_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: mongo-config
+                  key: mongo-url
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  # This is the name of the current Service for others to use.
+  name: httpserver-service
+spec:
+  # Set the current Service as external using the NodePort type.
+  type: NodePort
+  selector:
+    # This is how Service finds the Pod.
+    app: httpserver
+  ports:
+    - protocol: TCP
+      port: 8080 # Port the current Service is exposing.
+      targetPort: 8080 # Port of the Pod.
+      nodePort: 30100 # Exposes the current Service on each Node's IP at a static port.

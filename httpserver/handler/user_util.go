@@ -4,8 +4,9 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"math/rand"
-	"strconv"
 	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
 
 	"github.com/golang-jwt/jwt"
 	"github.com/google/uuid"
@@ -41,11 +42,8 @@ func (h *userHandler) generatePasswordHashAndSalt(rawPassword string, existingSa
 	return base64.URLEncoding.EncodeToString(hash[:]), salt
 }
 
-func (h *userHandler) newAccessToken(id int) (string, error) {
-	var (
-		sub = strconv.Itoa(id)
-		now = time.Now()
-	)
+func (h *userHandler) newAccessToken(id primitive.ObjectID) (string, error) {
+	now := time.Now()
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
 		Audience:  "api",
 		ExpiresAt: now.Add(h.cfg.GetTokenExpiration()).Unix(),
@@ -53,7 +51,7 @@ func (h *userHandler) newAccessToken(id int) (string, error) {
 		IssuedAt:  now.Unix(),
 		Issuer:    "api-server",
 		NotBefore: now.Unix(),
-		Subject:   sub,
+		Subject:   id.String(),
 	})
 	return token.SignedString([]byte(h.cfg.GetTokenHMACSecret()))
 }
