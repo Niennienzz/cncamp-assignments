@@ -453,7 +453,7 @@ MigrationBackup/
 FodyWeavers.xsd
 
 ### Built Binary ###
-cncamp_http_server
+bin/cncamp_http_server
 
 ### Default SQLite File ###
 sqlite.db

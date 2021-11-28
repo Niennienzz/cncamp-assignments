@@ -1,13 +1,19 @@
 dep:
-	go mod vendor
-
-build: dep
-	go build -o cncamp_http_server main.go
+	cd httpserver && go mod vendor
 
 run: dep
-	go run main.go
+	cd httpserver && go run main.go
 
 test: dep
-	go test cncamp_a01/api -v
-	go test cncamp_a01/config -v
-	go test cncamp_a01/constant -v
+	cd httpserver && go test cncamp_a01/api -v
+	cd httpserver && go test cncamp_a01/config -v
+	cd httpserver && go test cncamp_a01/constant -v
+
+bin: dep
+	cd httpserver && go build -o ../bin/cncamp_http_server
+
+image:
+	docker build -t niennienzz/cncamp_http_server:latest .
+
+push: image
+	docker push niennienzz/cncamp_http_server:latest

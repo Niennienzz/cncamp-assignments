@@ -6,8 +6,8 @@
 FROM golang:1.16-buster AS build-env
 
 # Copy source files.
-WORKDIR /app
 ADD . /app
+WORKDIR /app/httpserver
 
 # Resolve dependencies.
 RUN go mod vendor

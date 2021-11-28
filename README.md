@@ -92,10 +92,10 @@ curl --request GET --url http://localhost:8080/crypto/{cryptoCode} \
 - 构建本地 Docker 镜像
 
 ```bash
-docker build --tag cncamp_http_server .
+make image
 ```
 
-- 查看镜像列表，成功构建的 `cncamp_http_server` 镜像会出现在列表中
+- 查看镜像列表，成功构建的 `niennienzz/cncamp_http_server` 镜像会出现在列表中
 
 ```bash
 docker image ls
@@ -112,16 +112,10 @@ docker run -p 8080:8080 -e "RATE_LIMIT=5" -e "RATE_LIMIT_WINDOW_SEC=10s" cncamp_
 ## 将镜像推送至 DockerHub
 
 - 镜像已推送至[这里](https://hub.docker.com/repository/docker/niennienzz/cncamp-a02)
-- 构建本地 Docker 镜像时打的 Tag 比较简略，推送之前需重新使用标准格式打 Tag
-
-```bash
-docker tag <existing-image> <hub-user>/<repo-name>[:<tag>]
-```
-
 - 将镜像推送至 DockerHub
 
 ```bash
-docker push <hub-user>/<repo-name>[:<tag>]
+make push
 ```
 
 ## 进入容器查看 IP 配置
