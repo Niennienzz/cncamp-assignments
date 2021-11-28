@@ -76,6 +76,8 @@ curl --request GET --url http://localhost:8080/crypto/{cryptoCode} \
 ---
 
 # Cloud-Native Camp Assignment #02
+<details>
+  <summary>点击展开 Assignment #02</summary>
 
 ## 要求
 
@@ -143,3 +145,7 @@ docker inspect 6592fd79xxxx | grep -i pid
 ```bash
 nsenter -t 12345 -n ip a
 ```
+
+</details>
+
+---
