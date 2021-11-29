@@ -154,11 +154,13 @@ nsenter -t 12345 -n ip a
   > 配置均在 `/deployment` 路径中。
 
 - 在 `/deployment` 路径中，对于某个服务 `service` 来说:
+  > `Service` & `Deployment` 均集中配置在 `{service}.yaml` 文件中。
+  >
   > `ConfigMap` 均配置在 `{service}-config.yaml` 文件中。
   >
   > `Secret` 均配置在 `{service}-secret.yaml` 文件中。
   >
-  > `Service` & `Deployment` 均集中配置在 `{service}.yaml` 文件中。
+  > 遵循命名约定，以此类推。
 
 ## 3.2 - 要求与分析
 
@@ -202,8 +204,15 @@ nsenter -t 12345 -n ip a
 
 - 如何确保整个应用的高可用
 
-  > 配置增加多个副本，查看 `/deployment/httpserver.yaml` 文件中的 `replicas` 部分。
+  > 首先保证 `httpserver` 代码本身是完全无状态的，例如没有本地内存缓存；状态均集中保存在数据库中。
   >
-  > 并且保证 `httpserver` 代码本身是完全无状态的，例如没有本地内存缓存；状态均集中保存在数据库中。
+  > 配置增加多个副本，查看 `/deployment/httpserver.yaml` 文件中的 `replicas` 部分。
 
 - 如何通过证书保证通讯安全
+
+  > `httpserver` 代码本身没有使用 `HTTPS` 证书。
+  >
+  > 在配置 `Ingress` 时使用证书保证通讯安全。
+
+## 3.3 - 实验步骤
+

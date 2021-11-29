@@ -5,6 +5,7 @@ import (
 	"cncamp_a01/httpserver/handler"
 	"cncamp_a01/httpserver/middleware"
 	"fmt"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -18,7 +19,7 @@ type Interface interface {
 }
 
 func New() Interface {
-	app := fiber.New()
+	app := fiber.New(fiber.Config{ReadTimeout: time.Second * 5})
 	app.Use(recover.New())
 	app.Use(cors.New())
 	app.Use(middleware.Header())
