@@ -1,8 +1,8 @@
 package middleware
 
 import (
-	"cncamp_a01/config"
-	"cncamp_a01/constant"
+	"cncamp_a01/httpserver/config"
+	"cncamp_a01/httpserver/constant"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"

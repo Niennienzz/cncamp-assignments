@@ -1,11 +1,11 @@
-# Cloud-Native Camp Assignment #01
+# Cloud-Native Camp Assignment #01 - Go
 <details>
-  <summary>点击展开 Assignment #01</summary>
+  <summary>Click to expand Assignment #01</summary>
 
 - [GeekBang.org](https://u.geekbang.org/) / [InfoQ.cn](https://www.infoq.cn/) Cloud-Native Camp Assignment #01
 - 极客时间云原生训练营 - 作业 #01
 
-## Requirements
+## 1.1 - Requirements
 
 - Implement an HTTP server.
 - The server handles client requests, and write request headers into response headers.
@@ -13,7 +13,7 @@
 - The server should record client IP & HTTP status code in its log.
 - An endpoint `localhost/healthz` should always return 200.
 
-## 要求
+## 1.2 - 要求
 
 - 编写一个 HTTP 服务器。
 - 接收客户端 Request，并将 Request 中带的 Header 写入 Response Header -> [middleware/header.go](middleware/header.go)
@@ -21,7 +21,7 @@
 - Server 端记录访问日志包括客户端 IP，HTTP 返回码，输出到 Server 端的标准输出 -> [middleware/logger.go](middleware/logger.go)
 - 当访问 `localhost/healthz` 时，应返回 200 OK -> [api/api.go](api/api.go)
 
-## 如何运行
+## 1.3 - 如何运行
 
 - 测试环境 Golang v1.16+, GNU Make v3.81+.
 - 使用 `make dep` 命令下载依赖至 `vendor` 目录。
@@ -30,7 +30,7 @@
 - 由于服务器使用 SQLite，无需创建数据库；运行服务器会默认创建 `sqlite.db` 文件。
 - 环境变量与默认值请参考 `config/config.go` 文件。
 
-## 网络请求示例
+## 1.4 - 网络请求示例
 
 - Healthz 检测
 
@@ -75,11 +75,11 @@ curl --request GET --url http://localhost:8080/crypto/{cryptoCode} \
 
 ---
 
-# Cloud-Native Camp Assignment #02
+# Cloud-Native Camp Assignment #02 - Docker
 <details>
-  <summary>点击展开 Assignment #02</summary>
+  <summary>Click to expand Assignment #02</summary>
 
-## 要求
+## 2.1 - 要求
 
 - 构建本地 Docker 镜像
 - 编写 `Dockerfile` 将 Assignment #01 编写的服务器容器化 -> [Dockerfile](https://github.com/Niennienzz/cncamp-a01/blob/main/Dockerfile)
@@ -87,15 +87,15 @@ curl --request GET --url http://localhost:8080/crypto/{cryptoCode} \
 - 通过 Docker 命令本地启动服务器
 - 通过 `nsenter` 进入容器查看 IP 配置
 
-## 本地构建与运行
+## 2.2 - 本地构建与运行
 
 - 构建本地 Docker 镜像
 
 ```bash
-docker build --tag cncamp_http_server .
+make image
 ```
 
-- 查看镜像列表，成功构建的 `cncamp_http_server` 镜像会出现在列表中
+- 查看镜像列表，成功构建的 `niennienzz/cncamp_http_server` 镜像会出现在列表中
 
 ```bash
 docker image ls
@@ -109,22 +109,16 @@ docker run -p 8080:8080 cncamp_http_server
 docker run -p 8080:8080 -e "RATE_LIMIT=5" -e "RATE_LIMIT_WINDOW_SEC=10s" cncamp_http_server
 ```
 
-## 将镜像推送至 DockerHub
+## 2.3 - 将镜像推送至 DockerHub
 
-- 镜像已推送至[这里](https://hub.docker.com/repository/docker/niennienzz/cncamp-a02)
-- 构建本地 Docker 镜像时打的 Tag 比较简略，推送之前需重新使用标准格式打 Tag
-
-```bash
-docker tag <existing-image> <hub-user>/<repo-name>[:<tag>]
-```
-
+- 镜像已推送至[这里](https://hub.docker.com/repository/docker/niennienzz/cncamp_http_server)
 - 将镜像推送至 DockerHub
 
 ```bash
-docker push <hub-user>/<repo-name>[:<tag>]
+make push
 ```
 
-## 进入容器查看 IP 配置
+## 2.3 - 进入容器查看 IP 配置
 
 - 找到正在运行的容器实例
 
@@ -149,3 +143,64 @@ nsenter -t 12345 -n ip a
 </details>
 
 ---
+
+# Cloud-Native Camp Assignment #03 - Kubernetes
+
+## 3.1 - 文件路径结构
+
+- 文件路径:
+  - 代码全部在 `httpserver` 路径中
+  - 配置全部在 `deployment` 路径中
+
+- 在 `deployment` 路径中，对于某个服务 `service` 来说:
+  - 它的 `ConfigMap` 均配置在 `{service}-config.yaml` 文件中
+  - 它的 `Secret` 均配置在 `{service}-secret.yaml` 文件中
+  - 它的 `Service` & `Deployment` 均集中配置在 `{service}.yaml` 文件中
+
+## 3.2 - 要求与分析
+
+编写 Kubernetes 部署脚本将 `httpserver` 部署到 Kubernetes 集群。
+
+- 优雅启动
+
+> 使用 `readinessProbe` 探针检查 Pod 是否就绪，就绪则接收请求。
+> 
+> 查看 `httpserver.yaml` 文件中的 `readinessProbe` 部分。
+
+- 优雅终止
+
+> 使用 `terminationGracePeriodSeconds` 给与 Pod 适当的终止时间。
+> 
+> 查看 `httpserver.yaml` 文件中的 `terminationGracePeriodSeconds` 部分。
+> 
+> 当 Pod 关闭 Kubernetes 将给应用发送 `SIGTERM` 信号并等待配置的时间后关闭。
+> 
+> 同时 `httpserver` 代码中接受 `SIGTERM` 信号并执行各项终止任务，例如关闭数据库连接等。
+
+- 资源需求和 QoS 保证
+
+> 查看 `httpserver.yaml` 文件中的 `resources` 部分。
+
+- 探活
+
+> 使用 `livenessProbe` 探针检查 Pod 是否存活，如果检测不到 Pod 存活则杀掉当前 Pod 重启。
+>
+> 查看 `httpserver.yaml` 文件中的 `livenessProbe` 部分。
+
+- 日常运维需求，日志等级
+
+> `httpserver` 中使用 [logrus](github.com/sirupsen/logrus) 库中不同的日志级别。
+
+- 配置和代码分离
+
+> 代码全部在 `httpserver` 路径中，而配置全部在 `deployment` 路径中。
+>
+> 利用配置中的 `-config.yaml` & `-secret.yaml` 文件将配置注入到 Pod 中。
+
+- 如何确保整个应用的高可用
+
+> 配置 Deployment 增加多个副本，查看 `httpserver.yaml` 文件中的 `replicas` 部分。
+> 
+> 并且保证 `httpserver` 本身是完全无状态的，例如没有本地内存 Cache；状态集中保存在数据库中。
+
+- 如何通过证书保证通讯安全

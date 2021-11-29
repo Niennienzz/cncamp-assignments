@@ -19,8 +19,8 @@
 # vendor/
 
 ### Go Patch ###
-/vendor/
-/Godeps/
+*/vendor/
+*/Godeps/
 
 ### Intellij+all ###
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio, WebStorm and Rider
@@ -146,8 +146,8 @@ Temporary Items
 # End of https://www.toptal.com/developers/gitignore/api/go,macos,intellij+all
 
 ### Built Binary ###
-cncamp_http_server
+bin/cncamp_http_server
 
-### Default SQLite File ###
+### SQLite Test Files ###
 sqlite.db
 sqlite_test.db

@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"cncamp_a01/config"
+	"cncamp_a01/httpserver/config"
 	"strings"
 
 	"github.com/gofiber/fiber/v2"

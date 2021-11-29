@@ -1,9 +1,10 @@
 package main
 
 import (
-	"cncamp_a01/api"
+	"cncamp_a01/httpserver/api"
 	"os"
 	"os/signal"
+	"syscall"
 )
 
 func main() {
@@ -11,7 +12,7 @@ func main() {
 	go srv.Run()
 
 	sig := make(chan os.Signal, 1)
-	signal.Notify(sig, os.Interrupt)
+	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
 
 	<-sig
 	srv.Shutdown()

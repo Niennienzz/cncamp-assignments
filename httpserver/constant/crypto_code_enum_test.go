@@ -1,7 +1,7 @@
 package constant_test
 
 import (
-	"cncamp_a01/constant"
+	"cncamp_a01/httpserver/constant"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

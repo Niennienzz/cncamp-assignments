@@ -1,7 +1,7 @@
 package config
 
 import (
-	"cncamp_a01/constant"
+	"cncamp_a01/httpserver/constant"
 	"time"
 )
 
@@ -9,7 +9,9 @@ type Interface interface {
 	GetEnv() constant.EnvEnum
 	GetPort() int
 	GetVersion() string
-	GetSQLiteFileName() string
+	GetMongoUserName() string
+	GetMongoPassword() string
+	GetMongoURL() string
 	GetPasswordSaltLen() int
 	GetPasswordHashSecret() string
 	GetTokenHMACSecret() string
@@ -29,7 +31,9 @@ type config struct {
 	Env                enum     `required:"true" envconfig:"ENV" default:"DEV"`
 	Port               int      `required:"true" envconfig:"PORT" default:"8080"`
 	Version            string   `required:"true" envconfig:"VERSION" default:"0.0.1"`
-	SQLiteFileName     string   `required:"true" envconfig:"SQLITE_FILE" default:"sqlite.db"`
+	MongoUserName      string   `required:"true" envconfig:"MONGO_INITDB_ROOT_USERNAME" default:"mongo_user"`
+	MongoPassword      string   `required:"true" envconfig:"MONGO_INITDB_ROOT_PASSWORD" default:"mongo_pwd"`
+	MongoURL           string   `required:"true" envconfig:"MONGO_URL" default:"localhost:27017"`
 	PasswordSaltLen    int      `required:"true" envconfig:"PWD_SALT_LEN" default:"16"`
 	PasswordHashSecret string   `required:"true" envconfig:"PWD_HASH_SECRET" default:"twice_security"`
 	TokenHMACSecret    string   `required:"true" envconfig:"TOKEN_SECRET" default:"twice_security"`
@@ -51,8 +55,16 @@ func (c config) GetVersion() string {
 	return c.Version
 }
 
-func (c config) GetSQLiteFileName() string {
-	return c.SQLiteFileName
+func (c config) GetMongoUserName() string {
+	return c.MongoUserName
+}
+
+func (c config) GetMongoPassword() string {
+	return c.MongoPassword
+}
+
+func (c config) GetMongoURL() string {
+	return c.MongoURL
 }
 
 func (c config) GetPasswordSaltLen() int {

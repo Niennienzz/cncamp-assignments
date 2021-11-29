@@ -1,9 +1,9 @@
 package api
 
 import (
-	"cncamp_a01/config"
-	"cncamp_a01/handler"
-	"cncamp_a01/middleware"
+	"cncamp_a01/httpserver/config"
+	"cncamp_a01/httpserver/handler"
+	"cncamp_a01/httpserver/middleware"
 	"fmt"
 
 	"github.com/gofiber/fiber/v2"
