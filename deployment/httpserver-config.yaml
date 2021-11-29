@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: httpserver-config
+data:
+  password-salt-length: 16
+  token-expire-sec: 62400s
+  rate-limit: 30
+  rate-limit-window-sec: 30s
+  fetch-window-sec: 30s
