@@ -1,13 +1,20 @@
 package handler
 
 import (
-	"cncamp_a01/constant"
+	"cncamp_a01/httpserver/constant"
+	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"sync"
+	"time"
+
+	"go.mongodb.org/mongo-driver/mongo"
 
 	log "github.com/sirupsen/logrus"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func (h *handler) fetchAll() {
@@ -62,12 +69,25 @@ func (h *handler) fetchAndUpsert(wg *sync.WaitGroup, code constant.CryptoCodeEnu
 		return
 	}
 
-	const cryptoQuery = `
-		INSERT INTO cryptos (crypto_code, price, updated_at) VALUES (?, ?, datetime('now'))
-		ON CONFLICT(crypto_code) DO UPDATE SET price=?, updated_at=datetime('now');`
-	_, err = h.db.Exec(cryptoQuery, code.String(), r.Data.MarketData.PriceUSD, r.Data.MarketData.PriceUSD)
-	if err != nil {
+	upsert := true
+	res := h.mongoDB.Collection(cryptosCol).FindOneAndUpdate(
+		context.Background(),
+		bson.M{"crypto_code": code},
+		bson.M{
+			"$set": bson.M{
+				"price":      r.Data.MarketData.PriceUSD,
+				"updated_at": time.Now(),
+			},
+		},
+		&options.FindOneAndUpdateOptions{Upsert: &upsert},
+	)
+	if err := res.Err(); err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			log.Infof("created crypto %s", code)
+			return
+		}
 		log.Error(err)
 		return
 	}
+	log.Infof("updated crypto %s", code)
 }

@@ -1,7 +1,7 @@
 package config
 
 import (
-	"cncamp_a01/constant"
+	"cncamp_a01/httpserver/constant"
 	"sync"
 
 	"github.com/kelseyhightower/envconfig"

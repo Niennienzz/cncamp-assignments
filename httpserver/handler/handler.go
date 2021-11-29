@@ -1,18 +1,24 @@
 package handler
 
 import (
-	"cncamp_a01/config"
-	"cncamp_a01/constant"
+	"cncamp_a01/httpserver/config"
+	"cncamp_a01/httpserver/constant"
 	"context"
+	"fmt"
 	"net/http"
 	"time"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
-	"github.com/jmoiron/sqlx"
 	log "github.com/sirupsen/logrus"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo/readpref"
+)
 
-	_ "github.com/mattn/go-sqlite3"
+const (
+	cryptosCol = "cryptos"
+	usersCol   = "users"
 )
 
 type Handler interface {
@@ -27,33 +33,29 @@ type Handler interface {
 func New() Handler {
 	cfg := config.Instance()
 
-	db := sqlx.MustOpen("sqlite3", cfg.GetSQLiteFileName())
-
-	users := `
-	CREATE TABLE IF NOT EXISTS users (
-		id INTEGER PRIMARY KEY,
-		email TEXT NOT NULL UNIQUE,
-		hashed_password TEXT NOT NULL,
-		salt TEXT NOT NULL
-	);`
-	if _, err := db.ExecContext(context.Background(), users); err != nil {
+	dbURI := fmt.Sprintf(
+		"mongodb://%s:%s@%s",
+		cfg.GetMongoUserName(),
+		cfg.GetMongoPassword(),
+		cfg.GetMongoURL(),
+	)
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	mongoClient, err := mongo.Connect(ctx, options.Client().ApplyURI(dbURI))
+	if err != nil {
 		panic(err)
 	}
 
-	cryptos := `
-	CREATE TABLE IF NOT EXISTS cryptos (
-		id INTEGER PRIMARY KEY,
-		crypto_code TEXT NOT NULL UNIQUE,
-		price REAL NOT NULL,
-		updated_at TEXT NOT NULL
-	);`
-	if _, err := db.ExecContext(context.Background(), cryptos); err != nil {
-		panic(err)
-	}
+	ctx, cancel = context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	err = mongoClient.Ping(ctx, readpref.Primary())
+
+	mongoDB := mongoClient.Database("cncamp")
 
 	h := &handler{
 		cfg:         cfg,
-		db:          db,
+		mongoClient: mongoClient,
+		mongoDB:     mongoDB,
 		validate:    validator.New(),
 		fetchClient: http.DefaultClient,
 		fetchDone:   make(chan struct{}),
@@ -79,7 +81,8 @@ func New() Handler {
 
 type handler struct {
 	cfg         config.Interface
-	db          *sqlx.DB
+	mongoClient *mongo.Client
+	mongoDB     *mongo.Database
 	validate    *validator.Validate
 	fetchClient *http.Client
 	fetchDone   chan struct{}
@@ -96,7 +99,9 @@ func (h *handler) Crypto() Crypto {
 
 func (h *handler) Shutdown() error {
 	h.fetchDone <- struct{}{}
-	return h.db.Close()
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	return h.mongoClient.Disconnect(ctx)
 }
 
 type errorResponse struct {
