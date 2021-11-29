@@ -192,7 +192,7 @@ nsenter -t 12345 -n ip a
 
 - 日常运维需求，日志等级
 
-  > `httpserver` 代码中使用 [`logrus`](github.com/sirupsen/logrus) 库中不同的日志级别。
+  > `httpserver` 代码中使用 [`logrus`](https://github.com/sirupsen/logrus) 库中不同的日志级别。
 
 - 配置和代码分离
 
