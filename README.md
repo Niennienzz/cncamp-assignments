@@ -149,11 +149,11 @@ nsenter -t 12345 -n ip a
 ## 3.1 - 文件路径结构
 
 - 文件路径:
-  > 代码均在 `httpserver` 路径中。
+  > 代码均在 `/httpserver` 路径中。
   >
-  > 配置均在 `deployment` 路径中。
+  > 配置均在 `/deployment` 路径中。
 
-- 在 `deployment` 路径中，对于某个服务 `service` 来说:
+- 在 `/deployment` 路径中，对于某个服务 `service` 来说:
   > `ConfigMap` 均配置在 `{service}-config.yaml` 文件中。
   >
   > `Secret` 均配置在 `{service}-secret.yaml` 文件中。
@@ -162,48 +162,48 @@ nsenter -t 12345 -n ip a
 
 ## 3.2 - 要求与分析
 
-### 编写 Kubernetes 部署脚本将 `httpserver` 部署到 Kubernetes 集群
+### 编写 `Kubernetes` 部署脚本将 `httpserver` 部署到 `Kubernetes` 集群
 
 - 优雅启动
 
-  > 使用 `readinessProbe` 探针检查 Pod 是否就绪，就绪则接收请求。
+  > 使用 `readinessProbe` 探针检查 `Pod` 是否就绪，就绪则接收请求。
   >
   > 查看 `httpserver.yaml` 文件中的 `readinessProbe` 部分。
 
 - 优雅终止
 
-  > 使用 `terminationGracePeriodSeconds` 给与 Pod 适当的终止时间。
+  > 使用 `terminationGracePeriodSeconds` 给与 `Pod` 适当的终止时间。
   >
-  > 查看 `httpserver.yaml` 文件中的 `terminationGracePeriodSeconds` 部分。
+  > 查看 `/deployment/httpserver.yaml` 文件中的 `terminationGracePeriodSeconds` 部分。
   >
-  > 当 Pod 关闭 Kubernetes 将给应用发送 `SIGTERM` 信号并等待配置的时间后关闭。
+  > 当 `Pod` 关闭 `Kubernetes` 将给应用发送 `SIGTERM` 信号并等待配置的时间后关闭。
   >
   > 同时 `httpserver` 代码中接受 `SIGTERM` 信号并执行各项终止任务，例如关闭数据库连接等。
 
-- 资源需求和 QoS 保证
+- 资源需求和服务质量保证
 
-  > 查看 `httpserver.yaml` 文件中的 `resources` 部分。
+  > 查看 `/deployment/httpserver.yaml` 文件中的 `resources` 部分。
 
 - 探活
 
-  > 使用 `livenessProbe` 探针检查 Pod 是否存活，如果检测不到 Pod 存活则杀掉当前 Pod 重启。
+  > 使用 `livenessProbe` 探针检查 `Pod` 是否存活，如果检测不到 `Pod` 存活则杀掉当前 `Pod` 重启。
   >
-  > 查看 `httpserver.yaml` 文件中的 `livenessProbe` 部分。
+  > 查看 `/deployment/httpserver.yaml` 文件中的 `livenessProbe` 部分。
 
 - 日常运维需求，日志等级
 
-  > `httpserver` 中使用 [logrus](github.com/sirupsen/logrus) 库中不同的日志级别。
+  > `httpserver` 代码中使用 [`logrus`](github.com/sirupsen/logrus) 库中不同的日志级别。
 
 - 配置和代码分离
 
-  > 代码全部在 `httpserver` 路径中，而配置全部在 `deployment` 路径中。
+  > 代码全部在 `/httpserver` 路径中，而配置全部在 `/deployment` 路径中。
   >
-  > 利用配置中的 `-config.yaml` & `-secret.yaml` 文件将配置注入到 Pod 中。
+  > 利用配置中的 `*-config.yaml` & `*-secret.yaml` 文件将配置注入到 Pod 中。
 
 - 如何确保整个应用的高可用
 
-  > 配置 Deployment 增加多个副本，查看 `httpserver.yaml` 文件中的 `replicas` 部分。
+  > 配置增加多个副本，查看 `/deployment/httpserver.yaml` 文件中的 `replicas` 部分。
   >
-  > 并且保证 `httpserver` 本身是完全无状态的，例如没有本地内存 Cache；状态集中保存在数据库中。
+  > 并且保证 `httpserver` 代码本身是完全无状态的，例如没有本地内存缓存；状态均集中保存在数据库中。
 
 - 如何通过证书保证通讯安全
