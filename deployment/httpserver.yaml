@@ -5,7 +5,7 @@ metadata:
   labels:
     app: httpserver
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     # All Pods that match the following label belong to the current Deployment.
     matchLabels:
@@ -41,6 +41,32 @@ spec:
                 configMapKeyRef:
                   name: mongo-config
                   key: mongo-url
+          resources:
+            limits:
+              cpu: 100m
+              memory: 500Mi
+            requests:
+              cpu: 100m
+              memory: 500Mi
+          readinessProbe:
+            httpGet:
+              port: 8080
+              path: /healthz
+            initialDelaySeconds: 5  # Start to probe after 5s.
+            periodSeconds: 30       # After starting, probe every 30s.
+            timeoutSeconds: 2       # Pod must answer within 2s.
+            successThreshold: 1     # 1 successful probe -> success.
+            failureThreshold: 2     # 2 failed probes -> failure.
+          livenessProbe:
+            httpGet:
+              port: 8080
+              path: /healthz
+            initialDelaySeconds: 30 # Start to probe after 30s.
+            periodSeconds: 30       # After starting, probe every 30s.
+            timeoutSeconds: 2       # Pod must answer within 2s.
+            successThreshold: 1     # 1 successful probe -> success.
+            failureThreshold: 2     # 2 failed probes -> failure.
+      terminationGracePeriodSeconds: 30 # Graceful shutdown.
 
 ---
 
