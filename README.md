@@ -149,32 +149,35 @@ nsenter -t 12345 -n ip a
 ## 3.1 - 文件路径结构
 
 - 文件路径:
-  - 代码全部在 `httpserver` 路径中
-  - 配置全部在 `deployment` 路径中
+  > 代码均在 `httpserver` 路径中。
+  >
+  > 配置均在 `deployment` 路径中。
 
 - 在 `deployment` 路径中，对于某个服务 `service` 来说:
-  - 它的 `ConfigMap` 均配置在 `{service}-config.yaml` 文件中
-  - 它的 `Secret` 均配置在 `{service}-secret.yaml` 文件中
-  - 它的 `Service` & `Deployment` 均集中配置在 `{service}.yaml` 文件中
+  > `ConfigMap` 均配置在 `{service}-config.yaml` 文件中。
+  >
+  > `Secret` 均配置在 `{service}-secret.yaml` 文件中。
+  >
+  > `Service` & `Deployment` 均集中配置在 `{service}.yaml` 文件中。
 
 ## 3.2 - 要求与分析
 
-编写 Kubernetes 部署脚本将 `httpserver` 部署到 Kubernetes 集群。
+### 编写 Kubernetes 部署脚本将 `httpserver` 部署到 Kubernetes 集群
 
 - 优雅启动
 
   > 使用 `readinessProbe` 探针检查 Pod 是否就绪，就绪则接收请求。
-  > 
+  >
   > 查看 `httpserver.yaml` 文件中的 `readinessProbe` 部分。
 
 - 优雅终止
 
   > 使用 `terminationGracePeriodSeconds` 给与 Pod 适当的终止时间。
-  > 
+  >
   > 查看 `httpserver.yaml` 文件中的 `terminationGracePeriodSeconds` 部分。
-  > 
+  >
   > 当 Pod 关闭 Kubernetes 将给应用发送 `SIGTERM` 信号并等待配置的时间后关闭。
-  > 
+  >
   > 同时 `httpserver` 代码中接受 `SIGTERM` 信号并执行各项终止任务，例如关闭数据库连接等。
 
 - 资源需求和 QoS 保证
@@ -200,7 +203,7 @@ nsenter -t 12345 -n ip a
 - 如何确保整个应用的高可用
 
   > 配置 Deployment 增加多个副本，查看 `httpserver.yaml` 文件中的 `replicas` 部分。
-  > 
+  >
   > 并且保证 `httpserver` 本身是完全无状态的，例如没有本地内存 Cache；状态集中保存在数据库中。
 
 - 如何通过证书保证通讯安全

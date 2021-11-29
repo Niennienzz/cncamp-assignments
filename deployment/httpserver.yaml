@@ -11,10 +11,10 @@ spec:
     matchLabels:
       app: httpserver
   # Configuration for Pod insides the Deployment.
-  # Thus, it has its own 'metadata' and 'spec' sections.
+  # Thus, 'template' has its own 'metadata' and 'spec' sections.
   template:
     metadata:
-      # Labels is required for Pods in order for selector to use.
+      # The 'labels' section is required for Pods in order for selector to use.
       labels:
         app: httpserver
     spec:
@@ -22,7 +22,7 @@ spec:
       # But usually we use one container per Pod.
       containers:
         - name: httpserver
-          image: niennienzz/cncamp_http_server:latest
+          image: niennienzz/cncamp_http_server:latest # The image location in the registry.
           ports:
             - containerPort: 8080
           env:
