@@ -343,6 +343,6 @@
 
   ```bash
   curl --insecure --request GET \
-    --url http://192.168.64.2:30100/crypto/ETH \
+    --url https://niennienzz-httpserver.com/crypto/ETH \
     --header 'Authorization: Bearer {TOKEN}'
   ```
