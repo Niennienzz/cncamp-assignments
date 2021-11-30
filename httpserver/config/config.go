@@ -5,6 +5,11 @@ import (
 	"time"
 )
 
+// HTTPServerPort is the static port number for the httpserver/api.
+// No need to change this as long as it matches the port number
+// in the 'deployment/httpserver.yaml' file.
+const HTTPServerPort = 8080
+
 type Interface interface {
 	GetEnv() constant.EnvEnum
 	GetPort() int
@@ -29,7 +34,6 @@ type duration = time.Duration
 
 type config struct {
 	Env                enum     `required:"true" envconfig:"ENV" default:"DEV"`
-	Port               int      `required:"true" envconfig:"PORT" default:"8080"`
 	Version            string   `required:"true" envconfig:"VERSION" default:"0.0.1"`
 	MongoUserName      string   `required:"true" envconfig:"MONGO_INITDB_ROOT_USERNAME" default:"mongo_user"`
 	MongoPassword      string   `required:"true" envconfig:"MONGO_INITDB_ROOT_PASSWORD" default:"mongo_pwd"`
@@ -48,7 +52,7 @@ func (c config) GetEnv() constant.EnvEnum {
 }
 
 func (c config) GetPort() int {
-	return c.Port
+	return HTTPServerPort
 }
 
 func (c config) GetVersion() string {

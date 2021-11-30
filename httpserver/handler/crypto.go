@@ -5,12 +5,10 @@ import (
 	"errors"
 	"time"
 
-	"go.mongodb.org/mongo-driver/mongo"
-
-	"go.mongodb.org/mongo-driver/bson"
-
 	"github.com/gofiber/fiber/v2"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type Crypto interface {
@@ -21,16 +19,15 @@ type cryptoHandler struct {
 	*handler
 }
 
-type cryptoCodeEnum = constant.CryptoCodeEnum
-
-type cryptoDAO struct {
-	ID         primitive.ObjectID `json:"id" bson:"_id"`
-	CryptoCode cryptoCodeEnum     `json:"crypto_code" bson:"crypto_code"`
-	Price      float64            `json:"price" bson:"price"`
-	UpdatedAt  time.Time          `json:"updatedAt" bson:"updated_at"`
-}
-
 func (h *cryptoHandler) GetByCode() fiber.Handler {
+	type cryptoCodeEnum = constant.CryptoCodeEnum
+
+	type cryptoDAO struct {
+		ID         primitive.ObjectID `json:"id" bson:"_id"`
+		CryptoCode cryptoCodeEnum     `json:"crypto_code" bson:"crypto_code"`
+		Price      float64            `json:"price" bson:"price"`
+		UpdatedAt  time.Time          `json:"updatedAt" bson:"updated_at"`
+	}
 
 	return func(c *fiber.Ctx) error {
 		var (

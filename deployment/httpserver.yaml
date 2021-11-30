@@ -11,10 +11,10 @@ spec:
     matchLabels:
       app: httpserver
   # Configuration for Pod insides the Deployment.
-  # Thus, it has its own 'metadata' and 'spec' sections.
+  # Thus, 'template' has its own 'metadata' and 'spec' sections.
   template:
     metadata:
-      # Labels is required for Pods in order for selector to use.
+      # The 'labels' section is required for Pods in order for selector to use.
       labels:
         app: httpserver
     spec:
@@ -22,10 +22,47 @@ spec:
       # But usually we use one container per Pod.
       containers:
         - name: httpserver
-          image: niennienzz/cncamp_http_server:latest
+          image: niennienzz/cncamp_http_server:latest # The image location in the registry.
           ports:
             - containerPort: 8080
           env:
+            # Secrets and configs for httpserver.
+            - name: PWD_HASH_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: httpserver-secret
+                  key: httpserver-password-hash-secret
+            - name: TOKEN_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: httpserver-secret
+                  key: httpserver-token-hmac-secret
+            - name: PWD_SALT_LEN
+              valueFrom:
+                configMapKeyRef:
+                  name: httpserver-config
+                  key: password-salt-length
+            - name: TOKEN_EXPIRE_SEC
+              valueFrom:
+                configMapKeyRef:
+                  name: httpserver-config
+                  key: token-expire-sec
+            - name: RATE_LIMIT
+              valueFrom:
+                configMapKeyRef:
+                  name: httpserver-config
+                  key: rate-limit
+            - name: RATE_LIMIT_WINDOW_SEC
+              valueFrom:
+                configMapKeyRef:
+                  name: httpserver-config
+                  key: rate-limit-window-sec
+            - name: FETCH_WINDOW_SEC
+              valueFrom:
+                configMapKeyRef:
+                  name: httpserver-config
+                  key: fetch-window-sec
+            # Secrets and configs for mongo.
             - name: MONGO_INITDB_ROOT_USERNAME
               valueFrom:
                 secretKeyRef:
