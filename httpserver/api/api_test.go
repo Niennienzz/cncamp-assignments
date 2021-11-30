@@ -49,7 +49,7 @@ func TestBasicRoutes(t *testing.T) {
 			nil,
 		)
 
-		res, err := srv.app.Test(req, -1)
+		res, err := srv.fiberApp.Test(req, -1)
 		assert.Equalf(t, tc.expectedError, err != nil, tc.description)
 		if tc.expectedError {
 			continue

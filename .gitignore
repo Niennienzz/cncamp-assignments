@@ -151,3 +151,7 @@ bin/cncamp_http_server
 ### SQLite Test Files ###
 sqlite.db
 sqlite_test.db
+
+### Certs ###
+tls.crt
+tls.key

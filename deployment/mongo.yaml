@@ -36,6 +36,16 @@ spec:
                 secretKeyRef:
                   name: mongo-secret
                   key: mongo-password
+          # Need this section to use persistent storage.
+          volumeMounts:
+            - mountPath: /data/db/
+              name: mongodb-volume
+      # Need this section to use persistent storage.
+      # Although in practice, database should use remote volumes.
+      volumes:
+        - name: mongodb-volume
+          persistentVolumeClaim:
+            claimName: cluster-persistent-volume-claim
 
 ---
 
