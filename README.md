@@ -248,6 +248,7 @@
 - 配置 ConfigMap 与 Secret
 
   ```bash
+  kubectl apply -f deployment/sc.yaml
   kubectl apply -f deployment/pv.yaml
   kubectl apply -f deployment/pvc.yaml
   kubectl apply -f deployment/mongo-config.yaml

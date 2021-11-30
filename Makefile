@@ -17,6 +17,7 @@ push: image
 	docker push niennienzz/cncamp_http_server:latest
 
 cluster:
+	kubectl apply -f deployment/sc.yaml
 	kubectl apply -f deployment/pv.yaml
 	kubectl apply -f deployment/pvc.yaml
 	kubectl apply -f deployment/mongo-config.yaml
@@ -39,3 +40,4 @@ destroy:
 	kubectl delete --ignore-not-found=true -f deployment/mongo-config.yaml
 	kubectl delete --ignore-not-found=true -f deployment/pvc.yaml
 	kubectl delete --ignore-not-found=true -f deployment/pv.yaml
+	kubectl apply -f deployment/sc.yaml
