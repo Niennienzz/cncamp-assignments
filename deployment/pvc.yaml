@@ -4,6 +4,7 @@ metadata:
   name: cluster-persistent-volume-claim
 spec:
   storageClassName: manual
+  volumeMode: Filesystem
   accessModes:
     - ReadWriteOnce
   resources:

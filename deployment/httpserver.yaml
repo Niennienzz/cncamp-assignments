@@ -113,11 +113,13 @@ metadata:
   # This is the name of the current Service for others to use.
   name: httpserver-service
 spec:
-  type: ClusterIP
+  # Set the current Service as external using the NodePort type.
+  type: NodePort
   selector:
     # This is how Service finds the Pod.
     app: httpserver
   ports:
     - protocol: TCP
-      port: 80 # Port the current Service is exposing.
-      name: http
+      port: 8080 # Port the current Service is exposing.
+      targetPort: 8080 # Port of the Pod.
+      nodePort: 30100 # Exposes the current Service on each Node's IP at a static port.

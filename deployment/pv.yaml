@@ -6,6 +6,7 @@ metadata:
     type: local
 spec:
   storageClassName: manual
+  volumeMode: Filesystem
   capacity:
     storage: 100Mi
   accessModes:

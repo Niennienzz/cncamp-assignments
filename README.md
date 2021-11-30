@@ -243,6 +243,8 @@
 
 ### 3.3.3 - 实验步骤
 
+使用 `make cluster` 创建集群；使用 `make destroy` 销毁集群；下面是详细步骤解析。
+
 - 配置 ConfigMap 与 Secret
 
   ```bash
@@ -309,10 +311,17 @@
   #=> ingress-nginx-controller-admission   ClusterIP   10.111.53.73    <none>        443/TCP                      89m
   ```
 
-- 集群已经可以接收请求
+- 查看 Minikube 地址
 
   ```bash
-  curl --request POST \
+  minikube ip
+  #=> 192.xxx.xx.x
+  ```
+
+- 修改 `/etc/hosts` 文件添加 `{minikube_ip} niennienzz-httpserver.com` 之后集群可以接收请求
+
+  ```bash
+  curl --insecure --request POST \
     --url https://niennienzz-httpserver.com/user/signup \
     --header 'Content-Type: application/json' \
     --data '{
@@ -322,7 +331,7 @@
   ```
 
   ```bash
-  curl --request POST \
+  curl --insecure --request POST \
     --url https://niennienzz-httpserver.com/user/login \
     --header 'Content-Type: application/json' \
     --data '{
@@ -332,7 +341,7 @@
   ```
 
   ```bash
-  curl --request GET \
+  curl --insecure --request GET \
     --url http://192.168.64.2:30100/crypto/ETH \
     --header 'Authorization: Bearer {TOKEN}'
   ```

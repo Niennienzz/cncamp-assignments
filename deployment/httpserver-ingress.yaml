@@ -8,7 +8,7 @@ spec:
   tls:
     - hosts:
         - niennienzz-httpserver.com
-      secretName: tsl-secret
+      secretName: tls-secret
   rules:
     - host: niennienzz-httpserver.com
       http:
@@ -19,4 +19,4 @@ spec:
               service:
                 name: httpserver-service
                 port:
-                  number: 80
+                  number: 8080
