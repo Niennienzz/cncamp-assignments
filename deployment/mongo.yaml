@@ -36,6 +36,11 @@ spec:
                 secretKeyRef:
                   name: mongo-secret
                   key: mongo-password
+      # In practice, database should use remote volumes.
+      volumes:
+        - name: mongodb-volume
+          persistentVolumeClaim:
+            claimName: cluster-persistent-volume-claim
 
 ---
 

@@ -246,6 +246,8 @@
 - 配置 ConfigMap 与 Secret
 
   ```bash
+  kubectl apply -f deployment/pv.yaml
+  kubectl apply -f deployment/pvc.yaml
   kubectl apply -f deployment/mongo-config.yaml
   kubectl apply -f deployment/mongo-secret.yaml
   kubectl apply -f deployment/httpserver-config.yaml
@@ -331,6 +333,6 @@
 
   ```bash
   curl --request GET \
-    --url http://192.168.64.2:30100/crypto/BTC \
+    --url http://192.168.64.2:30100/crypto/ETH \
     --header 'Authorization: Bearer {TOKEN}'
   ```

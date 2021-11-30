@@ -2,6 +2,8 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: httpserver-ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
 spec:
   tls:
     - hosts:
@@ -17,4 +19,4 @@ spec:
               service:
                 name: httpserver-service
                 port:
-                  number: 8080
+                  number: 80
