@@ -2,14 +2,19 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: httpserver-ingress
-  namespace: httpserver
 spec:
+  tls:
+    - hosts:
+        - niennienzz-httpserver.com
+      secretName: tsl-secret
   rules:
     - host: niennienzz-httpserver.com
       http:
         paths:
-          - backend:
+          - path: /
+            pathType: Prefix
+            backend:
               service:
                 name: httpserver-service
                 port:
-                  number: 30100
+                  number: 8080
