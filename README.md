@@ -258,7 +258,7 @@
   kubectl apply -f deployment/httpserver-tls-secret.yaml
   ```
 
-- 配置 Service
+- 配置 Deployment 与 Service
 
   ```bash
   kubectl apply -f deployment/mongo.yaml
