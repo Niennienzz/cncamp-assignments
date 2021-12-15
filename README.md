@@ -145,6 +145,8 @@
 ---
 
 # Cloud-Native Camp Assignment #03 - Kubernetes
+<details>
+  <summary>Click to expand Assignment #03</summary>
 
 ## 3.1 - 文件路径结构
 
@@ -346,3 +348,17 @@
     --url https://niennienzz-httpserver.com/crypto/ETH \
     --header 'Authorization: Bearer {TOKEN}'
   ```
+
+</details>
+
+---
+
+# Cloud-Native Camp Assignment #04 - Prometheus
+
+## 4.1 - 要求
+
+- 为 HTTPServer 添加 0-2 秒的随机延时
+- 为 HTTPServer 项目添加延时 Metric
+- 将 HTTPServer 部署至测试集群，并完成 Prometheus 配置
+- 从 Prometheus 界面中查询延时指标数据
+- 创建一个 Grafana Dashboard 展现延时分配情况

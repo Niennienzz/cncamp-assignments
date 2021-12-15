@@ -23,6 +23,7 @@ spec:
       containers:
         - name: httpserver
           image: niennienzz/cncamp_http_server:latest # The image location in the registry.
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
           env:

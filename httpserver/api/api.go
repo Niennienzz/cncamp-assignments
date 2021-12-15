@@ -27,6 +27,7 @@ func New() Interface {
 	fiberApp.Use(middleware.Header())
 	fiberApp.Use(middleware.UserContext())
 	fiberApp.Use(middleware.Logger())
+	fiberApp.Use(middleware.RandomDelay())
 
 	// The health endpoint.
 	fiberApp.All("/healthz", func(c *fiber.Ctx) error {
