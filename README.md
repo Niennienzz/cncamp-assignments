@@ -393,9 +393,9 @@
 
 - 当使用 `deployment` 更新集群后，可以看到 Metrics 已经被成功采集
 
-![](metrics.png)
+![metrics](https://user-images.githubusercontent.com/13953610/146131281-73117f8e-9f1b-4e6d-9a00-df24276e2f93.png)
 
-![](targets.png)
+![targets](https://user-images.githubusercontent.com/13953610/146131309-5888df02-b918-4cde-8e85-f0357653bcc9.png)
 
 - 使用 Minikube 安装并启动本地 Grafana
 
@@ -410,4 +410,4 @@
 
 - 添加 DataSource 之后可以看到 50%/90%/95% 分位曲线已经成功显示
 
-![](grafana.png)
+![grafana](https://user-images.githubusercontent.com/13953610/146131336-f6c910b8-e995-450f-afb4-29df7333e2af.png)
