@@ -14,6 +14,10 @@ spec:
   # Thus, 'template' has its own 'metadata' and 'spec' sections.
   template:
     metadata:
+      # Use Prometheus to collect metrics.
+      annotations:
+        prometheus.io/port: httpserver-port
+        prometheus.io/scrape: "true"
       # The 'labels' section is required for Pods in order for selector to use.
       labels:
         app: httpserver
@@ -23,8 +27,10 @@ spec:
       containers:
         - name: httpserver
           image: niennienzz/cncamp_http_server:latest # The image location in the registry.
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
+              name: httpserver-port
           env:
             # Secrets and configs for httpserver.
             - name: PWD_HASH_SECRET

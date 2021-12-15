@@ -43,8 +43,8 @@ func (limiter *authLimiter) allow(userID string) bool {
 }
 
 var (
-	once    sync.Once
-	limiter *authLimiter
+	limiterOnce sync.Once
+	limiter     *authLimiter
 )
 
 // AuthLimiter rate-limits requests based on the user token.
@@ -53,7 +53,7 @@ func AuthLimiter() fiber.Handler {
 	cfg := config.Instance()
 
 	if limiter == nil {
-		once.Do(func() {
+		limiterOnce.Do(func() {
 			limiter = &authLimiter{
 				limit:     cfg.GetRateLimit(),
 				window:    cfg.GetRateLimitWindow(),

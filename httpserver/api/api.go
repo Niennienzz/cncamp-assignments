@@ -3,9 +3,13 @@ package api
 import (
 	"cncamp_a01/httpserver/config"
 	"cncamp_a01/httpserver/handler"
+	"cncamp_a01/httpserver/metrics"
 	"cncamp_a01/httpserver/middleware"
 	"fmt"
 	"time"
+
+	"github.com/gofiber/adaptor/v2"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -19,8 +23,13 @@ type Interface interface {
 }
 
 func New() Interface {
+	// Register Prometheus metrics.
+	metrics.Register()
+
+	// Initialize handlers.
 	handlers := handler.New()
 
+	// Register Fiber middlewares.
 	fiberApp := fiber.New(fiber.Config{ReadTimeout: time.Second * 5})
 	fiberApp.Use(recover.New())
 	fiberApp.Use(cors.New())
@@ -28,13 +37,19 @@ func New() Interface {
 	fiberApp.Use(middleware.UserContext())
 	fiberApp.Use(middleware.Logger())
 
-	// The health endpoint.
-	fiberApp.All("/healthz", func(c *fiber.Ctx) error {
+	// The Prometheus metrics endpoint.
+	fiberApp.All("/metrics", adaptor.HTTPHandler(promhttp.Handler()))
+
+	// Add random delay in the following endpoints.
+	delayed := fiberApp.Use(middleware.RandomDelay())
+
+	// The health check endpoint.
+	delayed.All("/healthz", func(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusOK)
 	})
 
 	// User endpoints.
-	user := fiberApp.Group("/user")
+	user := delayed.Group("/user")
 	{
 		user.Post("/signup", handlers.User().Signup())
 		user.Post("/login", handlers.User().Login())
@@ -42,7 +57,7 @@ func New() Interface {
 
 	// Crypto endpoints.
 	// Only authenticated user can call, and handlers follow rate-limiting rules.
-	cp := fiberApp.Group("/crypto")
+	cp := delayed.Group("/crypto")
 	cp.Use(middleware.AuthLimiter())
 	{
 		cp.Get("/:crypto_code", handlers.Crypto().GetByCode())
