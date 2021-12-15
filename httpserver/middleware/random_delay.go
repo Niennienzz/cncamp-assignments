@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"cncamp_a01/httpserver/metrics"
 	"math/rand"
 	"sync"
 	"time"
@@ -22,6 +23,11 @@ func RandomDelay() fiber.Handler {
 	}
 
 	return func(c *fiber.Ctx) error {
+		// Use Prometheus to collect metrics.
+		timer := metrics.NewTimer()
+		defer timer.ObserveTotal()
+
+		// Add random delay in handlers.
 		ms := delayRand.Int63n(2000)
 		time.Sleep(time.Millisecond * time.Duration(ms))
 		return c.Next()

@@ -15,7 +15,7 @@
 
 ## 1.2 - 要求
 
-- 编写一个 HTTP 服务器。
+- 编写一个 HTTP 服务器
 - 接收客户端 Request，并将 Request 中带的 Header 写入 Response Header -> [middleware/header.go](middleware/header.go)
 - 读取当前系统的环境变量中的 `VERSION` 配置，并写入Response Header -> [middleware/header.go](middleware/header.go)
 - Server 端记录访问日志包括客户端 IP，HTTP 返回码，输出到 Server 端的标准输出 -> [middleware/logger.go](middleware/logger.go)
@@ -24,11 +24,11 @@
 ## 1.3 - 如何运行
 
 - 测试环境 Golang v1.16+, GNU Make v3.81+.
-- 使用 `make dep` 命令下载依赖至 `vendor` 目录。
-- 使用 `make test` 命令运行单元测试。
-- 可以使用 `make build` 命令编译服务器；也可以使用 `make run` 命令直接运行。
-- 由于服务器使用 SQLite，无需创建数据库；运行服务器会默认创建 `sqlite.db` 文件。
-- 环境变量与默认值请参考 `config/config.go` 文件。
+- 使用 `make dep` 命令下载依赖至 `vendor` 目录
+- 使用 `make test` 命令运行单元测试
+- 可以使用 `make build` 命令编译服务器；也可以使用 `make run` 命令直接运行
+- 由于服务器使用 SQLite，无需创建数据库；运行服务器会默认创建 `sqlite.db` 文件
+- 环境变量与默认值请参考 `config/config.go` 文件
 
 ## 1.4 - 网络请求示例
 
@@ -151,18 +151,18 @@
 ## 3.1 - 文件路径结构
 
 - 文件路径:
-  > 代码均在 `/httpserver` 路径中。
+  > 代码均在 `/httpserver` 路径中
   >
-  > 配置均在 `/deployment` 路径中。
+  > 配置均在 `/deployment` 路径中
 
 - 在 `/deployment` 路径中，对于某个服务 `service` 来说:
-  > `Service` & `Deployment` 均集中配置在 `{service}.yaml` 文件中。
+  > `Service` & `Deployment` 均集中配置在 `{service}.yaml` 文件中
   >
-  > `ConfigMap` 均配置在 `{service}-config.yaml` 文件中。
+  > `ConfigMap` 均配置在 `{service}-config.yaml` 文件中
   >
-  > `Secret` 均配置在 `{service}-secret.yaml` 文件中。
+  > `Secret` 均配置在 `{service}-secret.yaml` 文件中
   >
-  > 遵循命名约定，以此类推。
+  > 遵循命名约定，以此类推
 
 ## 3.2 - 要求与分析
 
@@ -170,58 +170,58 @@
 
 - 优雅启动
 
-  > 使用 `readinessProbe` 探针检查 Pod 是否就绪，就绪则接收请求。
+  > 使用 `readinessProbe` 探针检查 Pod 是否就绪，就绪则接收请求
   >
-  > 查看 `httpserver.yaml` 文件中的 `readinessProbe` 部分。
+  > 查看 `httpserver.yaml` 文件中的 `readinessProbe` 部分
 
 - 优雅终止
 
-  > 使用 `terminationGracePeriodSeconds` 给与 Pod 适当的终止时间。
+  > 使用 `terminationGracePeriodSeconds` 给与 Pod 适当的终止时间
   >
-  > 查看 `/deployment/httpserver.yaml` 文件中的 `terminationGracePeriodSeconds` 部分。
+  > 查看 `/deployment/httpserver.yaml` 文件中的 `terminationGracePeriodSeconds` 部分
   >
-  > 当 Pod 关闭 Kubernetes 将给应用发送 `SIGTERM` 信号并等待配置的时间后关闭。
+  > 当 Pod 关闭 Kubernetes 将给应用发送 `SIGTERM` 信号并等待配置的时间后关闭
   >
-  > 同时 `httpserver` 代码中接受 `SIGTERM` 信号并执行各项终止任务，例如关闭数据库连接等。
+  > 同时 `httpserver` 代码中接受 `SIGTERM` 信号并执行各项终止任务，例如关闭数据库连接等
 
 - 资源需求和服务质量保证
 
-  > 查看 `/deployment/httpserver.yaml` 文件中的 `resources` 部分。
+  > 查看 `/deployment/httpserver.yaml` 文件中的 `resources` 部分
 
 - 探活
 
-  > 使用 `livenessProbe` 探针检查 Pod 是否存活，如果检测不到 Pod 存活则杀掉当前 Pod 重启。
+  > 使用 `livenessProbe` 探针检查 Pod 是否存活，如果检测不到 Pod 存活则杀掉当前 Pod 重启
   >
-  > 查看 `/deployment/httpserver.yaml` 文件中的 `livenessProbe` 部分。
+  > 查看 `/deployment/httpserver.yaml` 文件中的 `livenessProbe` 部分
 
 - 日常运维需求，日志等级
 
-  > `httpserver` 代码中使用 [`logrus`](https://github.com/sirupsen/logrus) 库中不同的日志级别。
+  > `httpserver` 代码中使用 [`logrus`](https://github.com/sirupsen/logrus) 库中不同的日志级别
 
 - 配置和代码分离
 
-  > 代码全部在 `/httpserver` 路径中，而配置全部在 `/deployment` 路径中。
+  > 代码全部在 `/httpserver` 路径中，而配置全部在 `/deployment` 路径中
   >
-  > 利用配置中的 `*-config.yaml` & `*-secret.yaml` 文件将配置注入到 Pod 中。
+  > 利用配置中的 `*-config.yaml` & `*-secret.yaml` 文件将配置注入到 Pod 中
 
 - 如何确保整个应用的高可用
 
-  > 首先保证 `httpserver` 代码本身是完全无状态的，例如没有本地内存缓存；状态均集中保存在数据库中。
+  > 首先保证 `httpserver` 代码本身是完全无状态的，例如没有本地内存缓存；状态均集中保存在数据库中
   >
-  > 配置增加多个副本，查看 `/deployment/httpserver.yaml` 文件中的 `replicas` 部分。
+  > 配置增加多个副本，查看 `/deployment/httpserver.yaml` 文件中的 `replicas` 部分
 
 - 如何通过证书保证通讯安全
 
-  > `httpserver` 代码本身没有使用 HTTPS 证书。
+  > `httpserver` 代码本身没有使用 HTTPS 证书
   >
-  > 在配置 Ingress 时使用证书保证通讯安全。
+  > 在配置 Ingress 时使用证书保证通讯安全
 
 ## 3.3 - 实验
 
 ### 3.3.1 - 实验环境
 
-- 因为没有申请服务器，且本机配置还不错，所以采用本地 Minikube 进行实验。
-- 本地实验肯定是规避了一些远程操作的困难，希望自己在以后的练习当中多尝试，而非浅尝辄止。
+- 因为没有申请服务器，且本机配置还不错，所以采用本地 Minikube 进行实验
+- 本地实验肯定是规避了一些远程操作的困难，希望自己在以后的练习当中多尝试，而非浅尝辄止
 
 ### 3.3.2 - 实验准备
 
@@ -245,7 +245,7 @@
 
 ### 3.3.3 - 实验步骤
 
-使用 `make cluster` 创建集群；使用 `make destroy` 销毁集群；下面是详细步骤解析。
+使用 `make cluster` 创建集群；使用 `make destroy` 销毁集群；下面是详细步骤解析
 
 - 配置 ConfigMap 与 Secret
 
@@ -357,8 +357,16 @@
 
 ## 4.1 - 要求
 
-- 为 HTTPServer 添加 0-2 秒的随机延时
-- 为 HTTPServer 项目添加延时 Metric
-- 将 HTTPServer 部署至测试集群，并完成 Prometheus 配置
+- 为 `httpserver` 添加 0-2 秒的随机延时
+- 为 `httpserver` 项目添加延时 Metrics
+- 将 `httpserver` 部署至测试集群，并完成 Prometheus 配置
 - 从 Prometheus 界面中查询延时指标数据
 - 创建一个 Grafana Dashboard 展现延时分配情况
+
+## 4.2 - 代码与配置更新
+
+- 指标搜集在 `httpserver/metrics/metrics.go` 文件中参考教程实现
+- 随机延时在 `httpserver/middleware/random_delay.go` 中间件实现，并使用上述 `metrics` 包注册
+- 在 `deployment/httpserver.yaml` 中添加相应的 Prometheus 配置
+
+## 4.3 - 实验步骤
