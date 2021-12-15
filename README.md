@@ -370,3 +370,44 @@
 - 在 `deployment/httpserver.yaml` 中添加相应的 Prometheus 配置
 
 ## 4.3 - 实验步骤
+
+- 使用 Minikube 安装并启动本地 Prometheus
+
+  ```bash
+  helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+  helm install prometheus prometheus-community/prometheus
+  kubectl expose service prometheus-server --type=NodePort --target-port=9090 --name=prometheus-server-np
+  minikube service prometheus-server-np
+  
+  #=> NAME                                             READY   STATUS    RESTARTS   AGE
+  #=> httpserver-deployment-5c4b5cf7fd-gdc2n           1/1     Running   0          32m
+  #=> httpserver-deployment-5c4b5cf7fd-h7j2p           1/1     Running   0          32m
+  #=> httpserver-deployment-5c4b5cf7fd-qf9v4           1/1     Running   0          32m
+  #=> mongo-deployment-6fd7d69865-b5ltx                1/1     Running   0          32m
+  #=> prometheus-alertmanager-67b88b45b4-5h4s5         2/2     Running   0          63s
+  #=> prometheus-kube-state-metrics-68b6c8b5c5-6mnrx   1/1     Running   0          63s
+  #=> prometheus-node-exporter-v6kfb                   1/1     Running   0          63s
+  #=> prometheus-pushgateway-8655bf87b9-5px84          1/1     Running   0          63s
+  #=> prometheus-server-bf5fffb66-f8jd9                2/2     Running   0          63s
+  ```
+
+- 当使用 `deployment` 更新集群后，可以看到 Metrics 已经被成功采集
+
+![](metrics.png)
+
+![](targets.png)
+
+- 使用 Minikube 安装并启动本地 Grafana
+
+  ```bash
+  helm repo add grafana https://grafana.github.io/helm-charts
+  helm search repo grafana
+  helm install grafana grafana/grafana
+  kubectl expose service grafana --type=NodePort --target-port=3000 --name=grafana-np
+  kubectl get secret --namespace default grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+  minikube service grafana-np
+  ```
+
+- 添加 DataSource 之后可以看到 50%/90%/95% 分位曲线已经成功显示
+
+![](grafana.png)

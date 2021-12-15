@@ -462,3 +462,6 @@ sqlite_test.db
 ### Certs ###
 tls.crt
 tls.key
+
+### Images ###
+*.png
