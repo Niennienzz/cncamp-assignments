@@ -371,6 +371,7 @@
 
 ## 4.3 - 实验步骤
 
+- 参考 Minikube [教程](https://blog.marcnuri.com/prometheus-grafana-setup-minikube)
 - 使用 Minikube 安装并启动本地 Prometheus
 
   ```bash
@@ -391,7 +392,7 @@
   #=> prometheus-server-bf5fffb66-f8jd9                2/2     Running   0          63s
   ```
 
-- 当使用 `deployment` 更新集群后，可以看到 Metrics 已经被成功采集
+- 更新集群后，可以看到 Metrics 已经被成功采集
 
 ![metrics](https://user-images.githubusercontent.com/13953610/146131281-73117f8e-9f1b-4e6d-9a00-df24276e2f93.png)
 
@@ -408,6 +409,6 @@
   minikube service grafana-np
   ```
 
-- 添加 DataSource 之后可以看到 50%/90%/95% 分位曲线已经成功显示
+- 添加 DataSource 之后可以看到 50% 90% 95% 分位曲线已经成功显示
 
 ![grafana](https://user-images.githubusercontent.com/13953610/146131336-f6c910b8-e995-450f-afb4-29df7333e2af.png)
