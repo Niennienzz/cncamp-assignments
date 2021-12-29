@@ -354,6 +354,8 @@
 ---
 
 # Cloud-Native Camp Assignment #04 - Prometheus
+<details>
+  <summary>Click to expand Assignment #04</summary>
 
 ## 4.1 - 要求
 
@@ -412,3 +414,61 @@
 - 添加 DataSource 之后可以看到 50% 90% 95% 分位曲线已经成功显示
 
   ![grafana](https://user-images.githubusercontent.com/13953610/146131336-f6c910b8-e995-450f-afb4-29df7333e2af.png)
+
+</details>
+
+---
+
+# Cloud-Native Camp Assignment #05 - Istio
+
+## 5.1 - 要求
+
+- 把 `httpserver` 服务以 Istio Ingress Gateway 的形式发布出来
+- 如何实现安全保证
+- 七层路由规则
+- Open Tracing 接入
+
+## 5.2 - 实验步骤
+
+- 安装 Istio
+
+  ```bash
+  curl -L https://istio.io/downloadIstio | sh -
+  cd istio-1.12.1
+  sudo cp bin/istioctl /usr/local/bin
+  istioctl install --set profile=demo -y
+  ```
+
+- 使用 Istio 监听插入 Sidecar
+
+  ```bash
+  kubectl label ns default istio-injection=enabled
+  ````
+
+- 生成证书并保存于 `istio-system` 命名空间
+
+  ```bash
+  openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -subj '/O=cncamp Inc./CN=*.cncamp.io' -keyout cncamp.io.key -out cncamp.io.crt
+  kubectl create -n istio-system secret tls cncamp-credential --key=cncamp.io.key --cert=cncamp.io.crt
+  ```
+
+- 部署: 服务、Istio Gateway、Tracing
+- ✅ `deployment/istio-specs.yaml` 使用 Istio Gateway 替换原有的 Ingress (**HTTPS, L7 Routing**)
+- ✅ `deployment/jaeger-specs.yaml` 接入 Jaeger (**Open Tracing**)
+
+  ```bash
+  make cluster
+  #=> make cluster 等效于下述命令
+  #=> kubectl apply -f deployment/sc.yaml
+  #=> kubectl apply -f deployment/pv.yaml
+  #=> kubectl apply -f deployment/pvc.yaml
+  #=> kubectl apply -f deployment/mongo-config.yaml
+  #=> kubectl apply -f deployment/mongo-secret.yaml
+  #=> kubectl apply -f deployment/httpserver-config.yaml
+  #=> kubectl apply -f deployment/httpserver-secret.yaml
+  #=> kubectl apply -f deployment/httpserver-tls-secret.yaml
+  #=> kubectl apply -f deployment/mongo.yaml
+  #=> kubectl apply -f deployment/httpserver.yaml
+  #=> kubectl apply -f deployment/istio-specs.yaml
+  #=> kubectl apply -f deployment/jaeger-specs.yaml
+  ```

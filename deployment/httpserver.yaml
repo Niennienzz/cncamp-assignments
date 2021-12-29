@@ -1,24 +1,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: httpserver-deployment
-  labels:
-    app: httpserver
+  name: httpserver
 spec:
   replicas: 3
   selector:
-    # All Pods that match the following label belong to the current Deployment.
     matchLabels:
       app: httpserver
-  # Configuration for Pod insides the Deployment.
-  # Thus, 'template' has its own 'metadata' and 'spec' sections.
   template:
     metadata:
-      # Use Prometheus to collect metrics.
       annotations:
         prometheus.io/port: httpserver-port
         prometheus.io/scrape: "true"
-      # The 'labels' section is required for Pods in order for selector to use.
       labels:
         app: httpserver
     spec:
@@ -116,16 +109,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  # This is the name of the current Service for others to use.
-  name: httpserver-service
+  name: httpserver
 spec:
-  # Set the current Service as external using the NodePort type.
-  type: NodePort
-  selector:
-    # This is how Service finds the Pod.
-    app: httpserver
   ports:
-    - protocol: TCP
-      port: 8080 # Port the current Service is exposing.
-      targetPort: 8080 # Port of the Pod.
-      nodePort: 30100 # Exposes the current Service on each Node's IP at a static port.
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    app: httpserver

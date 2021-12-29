@@ -460,8 +460,8 @@ sqlite.db
 sqlite_test.db
 
 ### Certs ###
-tls.crt
-tls.key
+*.crt
+*.key
 
 ### Images ###
 *.png
